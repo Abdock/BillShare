@@ -23,5 +23,8 @@ public class CustomerConfiguration : IEntityTypeConfiguration<Customer>
         builder.HasMany(e => e.ExpenseCategories)
             .WithOne(e => e.Customer)
             .HasForeignKey(e => e.CustomerId);
+        builder.HasOne(e => e.Role)
+            .WithMany()
+            .HasForeignKey(e => e.RoleId);
     }
 }

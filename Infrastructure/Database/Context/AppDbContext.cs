@@ -54,6 +54,7 @@ public class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new FriendshipStatusConfiguration());
         modelBuilder.ApplyConfiguration(new IconConfiguration());
         modelBuilder.ApplyConfiguration(new PasswordConfiguration());
+        modelBuilder.ApplyConfiguration(new RefreshTokenConfiguration());
         modelBuilder.ApplyConfiguration(new RoleConfiguration());
     }
 }

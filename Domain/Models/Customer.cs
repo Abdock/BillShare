@@ -1,21 +1,22 @@
 ﻿using System.Runtime.CompilerServices;
 using Domain.Base;
+using Domain.Enums;
 
 [assembly: InternalsVisibleTo("Infrastructure")]
 namespace Domain.Models;
 
 public class Customer : BaseEntity
 {
-    public string ExternalId { get; set; } = default!;
+    public string? ExternalId { get; set; } = default!;
     public string Email { get; set; } = default!;
-    public string TelegramHandle { get; set; } = default!;
-    public string PhoneNumber { get; set; } = default!;
+    public string? TelegramHandle { get; set; } = default!;
+    public string? PhoneNumber { get; set; } = default!;
     public string Name { get; init; } = default!;
-    public string AvatarUrl { get; set; } = default!;
+    public string? AvatarUrl { get; set; } = default!;
 
     public Guid PasswordId { get; set; }
 
-    public Guid RoleId { get; set; }
+    public RoleId RoleId { get; set; }
     
     public Role Role { get; set; } = default!;
     public Password Password { get; set; } = default!;

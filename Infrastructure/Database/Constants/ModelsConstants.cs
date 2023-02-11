@@ -14,4 +14,5 @@ public static class ModelsConstants
     public const int AmountScale = 2;
     public const int MultiplierPrecision = 5;
     public const int MultiplierScale = 2;
+    public const int TokenMaxLength = 512;
 }

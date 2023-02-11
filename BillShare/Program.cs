@@ -1,19 +1,11 @@
-using System.Text.Json.Serialization;
-using Infrastructure.Database.Context;
-using Microsoft.EntityFrameworkCore;
+using BillShare.Constants;
+using BillShare.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        var enumConverter = new JsonStringEnumConverter();
-        options.JsonSerializerOptions.Converters.Add(enumConverter);
-        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-    });
-builder.Services.AddDbContext<AppDbContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
+builder.Services.ConfigureDbContext(builder.Configuration);
+builder.Services.ConfigureControllers();
+builder.Services.ConfigureCors();
+builder.Services.ConfigureAuthenticationAndAuthorization(builder.Configuration);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -25,6 +17,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseRouting();
+app.UseCors(CorsProfiles.AllowsAll);
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
