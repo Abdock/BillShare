@@ -1,14 +1,15 @@
 ﻿using System.Text.Json.Serialization;
 using BillShare.Constants;
+using Contracts.Authentication;
 using Domain.Repositories;
-using Infrastructure.Auth.Interfaces;
-using Infrastructure.Auth.Models;
-using Infrastructure.Auth.Service;
+using Infrastructure.Authentication.Extensions;
+using Infrastructure.Authentication.Service;
 using Infrastructure.Database.Context;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Services.Abstractions.Authentication;
 
 namespace BillShare.Extensions;
 
@@ -55,7 +56,7 @@ public static class ServiceExtensions
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         return services.AddDbContext<AppDbContext>(options =>
         {
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+            options.UseSqlServer(configuration.GetConnectionString(ConfigurationConstants.DefaultConnectionString));
         });
     }
 

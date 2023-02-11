@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.Auth.Constants;
+﻿namespace Infrastructure.Authentication.Constants;
 
 public static class CustomClaimTypes
 {

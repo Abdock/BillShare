@@ -1,6 +1,6 @@
 ﻿using Domain.Models;
 
-namespace Infrastructure.Auth.Interfaces;
+namespace Services.Abstractions.Authentication;
 
 public interface IPasswordHasher
 {

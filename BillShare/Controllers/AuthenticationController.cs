@@ -1,6 +1,6 @@
-﻿using Infrastructure.Auth.Interfaces;
-using Infrastructure.Auth.Models;
+﻿using Contracts.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using Services.Abstractions.Authentication;
 
 namespace BillShare.Controllers;
 

@@ -1,7 +1,4 @@
-﻿using System.Text;
-using Microsoft.IdentityModel.Tokens;
-
-namespace Infrastructure.Auth.Models;
+﻿namespace Contracts.Authentication;
 
 public class AuthenticationOptions
 {
@@ -10,9 +7,4 @@ public class AuthenticationOptions
     public required string Key { get; init; }
     public required TimeSpan AccessTokenLifetime { get; init; }
     public required TimeSpan RefreshTokenLifetime { get; init; }
-
-    public SecurityKey GenerateSecurityKey()
-    {
-        return new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Key));
-    }
 }

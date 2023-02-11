@@ -1,15 +1,16 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using Contracts.Authentication;
 using Domain.Enums;
 using Domain.Models;
 using Domain.Repositories;
-using Infrastructure.Auth.Constants;
-using Infrastructure.Auth.Interfaces;
-using Infrastructure.Auth.Models;
+using Infrastructure.Authentication.Constants;
+using Infrastructure.Authentication.Extensions;
 using Microsoft.IdentityModel.Tokens;
+using Services.Abstractions.Authentication;
 
-namespace Infrastructure.Auth.Service;
+namespace Infrastructure.Authentication.Service;
 
 public class JwtAuthenticationService : IJwtAuthenticationService
 {

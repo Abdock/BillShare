@@ -1,11 +1,11 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using Domain.Models;
-using Infrastructure.Auth.Interfaces;
 using Infrastructure.Database.Constants;
+using Services.Abstractions.Authentication;
 using Services.Extensions;
 
-namespace Infrastructure.Auth.Service;
+namespace Infrastructure.Authentication.Service;
 
 public class PasswordHasher : IPasswordHasher
 {

@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.Auth.Models;
+﻿namespace Contracts.Authentication;
 
 public class AuthenticationToken
 {

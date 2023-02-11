@@ -1,7 +1,6 @@
-﻿using Domain.Models;
-using Infrastructure.Auth.Models;
+﻿using Contracts.Authentication;
 
-namespace Infrastructure.Auth.Interfaces;
+namespace Services.Abstractions.Authentication;
 
 public interface IJwtAuthenticationService
 {
