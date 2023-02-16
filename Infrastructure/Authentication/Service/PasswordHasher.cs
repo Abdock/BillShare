@@ -9,10 +9,21 @@ namespace Infrastructure.Authentication.Service;
 
 public class PasswordHasher : IPasswordHasher
 {
+    private static string GenerateSalt(int length)
+    {
+        var saltBytes = RandomNumberGenerator.GetBytes(length / 2);
+        var saltBuilder = new StringBuilder();
+        foreach (var saltByte in saltBytes)
+        {
+            saltBuilder.Append(saltByte.ToString("x2"));
+        }
+
+        return saltBuilder.ToString();
+    }
+
     public Password HashPassword(Customer customer, string password)
     {
-        var saltBytes = RandomNumberGenerator.GetBytes(ModelsConstants.SaltMaxLength);
-        var salt = Encoding.UTF8.GetString(saltBytes);
+        var salt = GenerateSalt(ModelsConstants.SaltMaxLength);
         var hashedPassword = (salt + password).ComputeSha256();
         var encryptionResult = new Password
         {

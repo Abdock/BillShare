@@ -2,27 +2,24 @@
 using System.Security.Claims;
 using System.Security.Cryptography;
 using Contracts.Authentication;
-using Domain.Enums;
+using Contracts.Responses;
 using Domain.Models;
-using Domain.Repositories;
 using Infrastructure.Authentication.Constants;
 using Infrastructure.Authentication.Extensions;
 using Microsoft.IdentityModel.Tokens;
+using Services.Abstractions;
 using Services.Abstractions.Authentication;
 
 namespace Infrastructure.Authentication.Service;
-
 public class JwtAuthenticationService : IJwtAuthenticationService
 {
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IPasswordHasher _passwordHasher;
+    private readonly ICustomerService _customerService;
     private readonly JwtSecurityTokenHandler _tokenHandler;
     private readonly AuthenticationOptions _options;
 
-    public JwtAuthenticationService(IUnitOfWork unitOfWork, IPasswordHasher passwordHasher, AuthenticationOptions options)
+    public JwtAuthenticationService(ICustomerService customerService, AuthenticationOptions options)
     {
-        _unitOfWork = unitOfWork;
-        _passwordHasher = passwordHasher;
+        _customerService = customerService;
         _options = options;
         _tokenHandler = new JwtSecurityTokenHandler();
     }
@@ -37,7 +34,7 @@ public class JwtAuthenticationService : IJwtAuthenticationService
         return accessToken;
     }
 
-    private RefreshToken GenerateRefreshToken(Customer customer)
+    private RefreshToken GenerateRefreshToken(CustomerResponse customer)
     {
         using var rng = RandomNumberGenerator.Create();
         var data = new byte[AuthenticationConstants.RefreshTokenLength];
@@ -46,7 +43,6 @@ public class JwtAuthenticationService : IJwtAuthenticationService
         var expirationDate = DateTime.UtcNow.Add(_options.RefreshTokenLifetime);
         var refreshToken = new RefreshToken
         {
-            Owner = customer,
             OwnerId = customer.Id,
             ExpirationDateTime = expirationDate,
             Token = token
@@ -54,7 +50,7 @@ public class JwtAuthenticationService : IJwtAuthenticationService
         return refreshToken;
     }
 
-    private AuthenticationToken GenerateJwtToken(Customer customer)
+    private AuthenticationToken GenerateJwtToken(CustomerResponse customer)
     {
         var claims = new[]
         {
@@ -73,23 +69,13 @@ public class JwtAuthenticationService : IJwtAuthenticationService
 
     public async Task<AuthenticationToken> SignInAsync(SignInUserCredentials credentials, CancellationToken token)
     {
-        var customer = await _unitOfWork.CustomerRepository
-            .GetByCredentialsAsync(credentials.Username, credentials.Password, token);
+        var customer = await _customerService.GetCustomerByCredentialsAsync(credentials, token);
         return GenerateJwtToken(customer);
     }
 
     public async Task<AuthenticationToken> SignUpAsync(SignUpUserCredentials credentials, CancellationToken token = default)
     {
-        var customer = new Customer
-        {
-            Email = credentials.Email,
-            Name = credentials.Username,
-            RoleId = RoleId.User
-        };
-        var passwordHash = _passwordHasher.HashPassword(customer, credentials.Password);
-        customer.Password = passwordHash;
-        await _unitOfWork.CustomerRepository.AddCustomerAsync(customer, token);
-        await _unitOfWork.SaveChangesAsync(token);
+        var customer = await _customerService.CreateCustomerAsync(credentials, token);
         return GenerateJwtToken(customer);
     }
 }
