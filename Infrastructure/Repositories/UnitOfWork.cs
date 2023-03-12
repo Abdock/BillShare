@@ -5,18 +5,20 @@ namespace Infrastructure.Repositories;
 
 public class UnitOfWork : IUnitOfWork
 {
-    private readonly AppDbContext _dbContext;
+    private readonly AppDbContext _context;
 
-    public UnitOfWork(AppDbContext dbContext)
+    public UnitOfWork(AppDbContext context)
     {
-        _dbContext = dbContext;
-        CustomerRepository = new CustomerRepository(dbContext);
+        _context = context;
+        CustomerRepository = new CustomerRepository(context);
+        RefreshTokenRepository = new RefreshTokenRepository(context);
     }
 
     public ICustomerRepository CustomerRepository { get; }
+    public IRefreshTokenRepository RefreshTokenRepository { get; }
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        return await _dbContext.SaveChangesAsync(cancellationToken);
+        return await _context.SaveChangesAsync(cancellationToken);
     }
 }

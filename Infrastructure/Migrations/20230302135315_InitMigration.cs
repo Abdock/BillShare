@@ -232,7 +232,7 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RefreshToken",
+                name: "RefreshTokens",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -242,9 +242,9 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RefreshToken", x => x.Id);
+                    table.PrimaryKey("PK_RefreshTokens", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RefreshToken_Customers_OwnerId",
+                        name: "FK_RefreshTokens_Customers_OwnerId",
                         column: x => x.OwnerId,
                         principalTable: "Customers",
                         principalColumn: "Id",
@@ -619,8 +619,8 @@ namespace Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_RefreshToken_OwnerId",
-                table: "RefreshToken",
+                name: "IX_RefreshTokens_OwnerId",
+                table: "RefreshTokens",
                 column: "OwnerId");
         }
 
@@ -643,7 +643,7 @@ namespace Infrastructure.Migrations
                 name: "Icons");
 
             migrationBuilder.DropTable(
-                name: "RefreshToken");
+                name: "RefreshTokens");
 
             migrationBuilder.DropTable(
                 name: "ExpenseItems");

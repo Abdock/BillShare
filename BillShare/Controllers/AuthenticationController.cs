@@ -8,15 +8,15 @@ namespace BillShare.Controllers;
 [Route("[controller]")]
 public class AuthenticationController : ControllerBase
 {
-    private readonly IJwtAuthenticationService _authenticationService;
+    private readonly IAuthenticationService _authenticationService;
 
-    public AuthenticationController(IJwtAuthenticationService authenticationService)
+    public AuthenticationController(IAuthenticationService authenticationService)
     {
         _authenticationService = authenticationService;
     }
 
     [HttpPost]
-    [Route("[action]")]
+    [Route("register")]
     public async Task<ActionResult<AuthenticationToken>> Register([FromBody] SignUpUserCredentials credentials)
     {
         var token = await _authenticationService.SignUpAsync(credentials);
@@ -24,7 +24,7 @@ public class AuthenticationController : ControllerBase
     }
 
     [HttpPost]
-    [Route("[action]")]
+    [Route("login")]
     public async Task<ActionResult<AuthenticationToken>> Login([FromBody] SignInUserCredentials credentials)
     {
         var token = await _authenticationService.SignInAsync(credentials);

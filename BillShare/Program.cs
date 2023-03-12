@@ -3,7 +3,9 @@ using BillShare.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.ConfigureDbContext(builder.Configuration);
+builder.Services.ConfigureCustomServices();
 builder.Services.ConfigureControllers();
+builder.Services.ConfigureMapper();
 builder.Services.ConfigureCors();
 builder.Services.ConfigureAuthenticationAndAuthorization(builder.Configuration);
 builder.Services.AddEndpointsApiExplorer();

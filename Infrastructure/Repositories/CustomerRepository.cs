@@ -16,9 +16,9 @@ public class CustomerRepository : ICustomerRepository
         _context = context;
     }
 
-    public async Task<Customer> GetByIdAsync(Guid id, CancellationToken token = default)
+    public async Task<Customer> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var customer = await _context.Customers.AsNoTracking().FirstOrDefaultAsync(e => e.Id == id, token);
+        var customer = await _context.Customers.AsNoTracking().FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
         if (customer == null)
         {
             throw new NotFoundException($"Customer with id {id} not found");
@@ -27,9 +27,9 @@ public class CustomerRepository : ICustomerRepository
         return customer;
     }
 
-    public async Task<Customer> GetByEmailAsync(string email, CancellationToken token = default)
+    public async Task<Customer> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
-        var customer = await _context.Customers.AsNoTracking().FirstOrDefaultAsync(e => e.Email == email, token);
+        var customer = await _context.Customers.AsNoTracking().FirstOrDefaultAsync(e => e.Email == email, cancellationToken);
         if (customer == null)
         {
             throw new NotFoundException($"Customer with email {email} not found");
@@ -39,12 +39,12 @@ public class CustomerRepository : ICustomerRepository
     }
 
     public async Task<Customer> GetByCredentialsAsync(string username, string password,
-        CancellationToken token = default)
+        CancellationToken cancellationToken = default)
     {
         var customer = await _context.Customers
             .Include(e => e.Password)
             .AsNoTracking()
-            .FirstOrDefaultAsync(e => e.Name == username, token);
+            .FirstOrDefaultAsync(e => e.Name == username, cancellationToken);
         if (customer == null)
         {
             throw new NotFoundException("Invalid user credentials");
@@ -59,8 +59,8 @@ public class CustomerRepository : ICustomerRepository
         return customer;
     }
 
-    public async Task AddCustomerAsync(Customer customer, CancellationToken token = default)
+    public async Task AddCustomerAsync(Customer customer, CancellationToken cancellationToken = default)
     {
-        await _context.AddAsync(customer, token);
+        await _context.AddAsync(customer, cancellationToken);
     }
 }

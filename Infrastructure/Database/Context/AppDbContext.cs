@@ -25,7 +25,8 @@ public class AppDbContext : DbContext
     public DbSet<Icon> Icons { get; set; } = default!;
     public DbSet<Password> Passwords { get; set; } = default!;
     public DbSet<Role> Roles { get; set; } = default!;
-
+    public DbSet<RefreshToken> RefreshTokens { get; set; } = default!;
+    
     protected AppDbContext()
     {
     }

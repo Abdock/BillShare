@@ -1,40 +1,47 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using AutoMapper;
 using Contracts.Authentication;
 using Contracts.Responses;
 using Domain.Models;
+using Domain.Repositories;
 using Infrastructure.Authentication.Constants;
 using Infrastructure.Authentication.Extensions;
 using Microsoft.IdentityModel.Tokens;
-using Services.Abstractions;
 using Services.Abstractions.Authentication;
 
 namespace Infrastructure.Authentication.Service;
-public class JwtAuthenticationService : IJwtAuthenticationService
-{
-    private readonly ICustomerService _customerService;
-    private readonly JwtSecurityTokenHandler _tokenHandler;
-    private readonly AuthenticationOptions _options;
 
-    public JwtAuthenticationService(ICustomerService customerService, AuthenticationOptions options)
+public class TokenGeneratorService : ITokenGeneratorService
+{
+    private readonly AuthenticationOptions _options;
+    private readonly JwtSecurityTokenHandler _tokenHandler;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
+
+    public TokenGeneratorService(AuthenticationOptions options, IUnitOfWork unitOfWork, IMapper mapper)
     {
-        _customerService = customerService;
         _options = options;
+        _unitOfWork = unitOfWork;
+        _mapper = mapper;
         _tokenHandler = new JwtSecurityTokenHandler();
     }
 
     private string GenerateAccessToken(IEnumerable<Claim> claims)
     {
         var deadline = DateTime.UtcNow.Add(_options.AccessTokenLifetime);
-        var signinCredentials = new SigningCredentials(_options.GenerateSecurityKey(), SecurityAlgorithms.HmacSha256);
+        var key = _options.GenerateSecurityKey();
+        const string securityAlgorithm = SecurityAlgorithms.HmacSha256;
+        var signinCredentials = new SigningCredentials(key, securityAlgorithm);
         var jwt = new JwtSecurityToken(_options.Issuer, _options.Audience, claims, expires: deadline,
             signingCredentials: signinCredentials);
         var accessToken = _tokenHandler.WriteToken(jwt)!;
         return accessToken;
     }
 
-    private RefreshToken GenerateRefreshToken(CustomerResponse customer)
+    private async Task<RefreshToken> GenerateRefreshTokenAsync(CustomerResponse customer,
+        CancellationToken cancellationToken = default)
     {
         using var rng = RandomNumberGenerator.Create();
         var data = new byte[AuthenticationConstants.RefreshTokenLength];
@@ -47,10 +54,13 @@ public class JwtAuthenticationService : IJwtAuthenticationService
             ExpirationDateTime = expirationDate,
             Token = token
         };
+        await _unitOfWork.RefreshTokenRepository.AddRefreshTokenAsync(refreshToken, cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
         return refreshToken;
     }
 
-    private AuthenticationToken GenerateJwtToken(CustomerResponse customer)
+    public async Task<AuthenticationToken> GenerateJwtTokenAsync(CustomerResponse customer,
+        CancellationToken cancellationToken = default)
     {
         var claims = new[]
         {
@@ -58,7 +68,7 @@ public class JwtAuthenticationService : IJwtAuthenticationService
             new Claim(CustomClaimTypes.Uid, customer.Id.ToString())
         };
         var accessToken = GenerateAccessToken(claims);
-        var refreshToken = GenerateRefreshToken(customer);
+        var refreshToken = await GenerateRefreshTokenAsync(customer, cancellationToken);
         var token = new AuthenticationToken
         {
             AccessToken = accessToken,
@@ -67,15 +77,12 @@ public class JwtAuthenticationService : IJwtAuthenticationService
         return token;
     }
 
-    public async Task<AuthenticationToken> SignInAsync(SignInUserCredentials credentials, CancellationToken token)
+    public async Task<AuthenticationToken> RefreshJwtTokenAsync(string refreshToken,
+        CancellationToken cancellationToken = default)
     {
-        var customer = await _customerService.GetCustomerByCredentialsAsync(credentials, token);
-        return GenerateJwtToken(customer);
-    }
-
-    public async Task<AuthenticationToken> SignUpAsync(SignUpUserCredentials credentials, CancellationToken token = default)
-    {
-        var customer = await _customerService.CreateCustomerAsync(credentials, token);
-        return GenerateJwtToken(customer);
+        var refreshTokenOwner = await _unitOfWork.RefreshTokenRepository
+            .GetRefreshTokenOwnerAsync(refreshToken, cancellationToken);
+        var customer = _mapper.Map<CustomerResponse>(refreshTokenOwner);
+        return await GenerateJwtTokenAsync(customer, cancellationToken);
     }
 }

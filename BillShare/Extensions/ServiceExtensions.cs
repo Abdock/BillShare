@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Reflection;
+using System.Text.Json.Serialization;
 using BillShare.Constants;
 using Contracts.Authentication;
 using Domain.Repositories;
@@ -9,6 +10,8 @@ using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Services;
+using Services.Abstractions;
 using Services.Abstractions.Authentication;
 
 namespace BillShare.Extensions;
@@ -17,8 +20,6 @@ public static class ServiceExtensions
 {
     public static IServiceCollection ConfigureAuthenticationAndAuthorization(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddScoped<IJwtAuthenticationService, JwtAuthenticationService>();
-        services.AddScoped<IPasswordHasher, PasswordHasher>();
         var section = configuration.GetSection(ConfigurationConstants.JwtConfig);
         var options = section.Get<AuthenticationOptions>()!;
         services.AddScoped<AuthenticationOptions>(_ => options);
@@ -70,6 +71,24 @@ public static class ServiceExtensions
                     .AllowAnyMethod()
                     .AllowAnyOrigin();
             });
+        });
+    }
+
+    public static IServiceCollection ConfigureCustomServices(this IServiceCollection services)
+    {
+        services.AddScoped<IAuthenticationService, AuthenticationService>();
+        services.AddScoped<IPasswordHasher, PasswordHasher>();
+        services.AddScoped<ITokenGeneratorService, TokenGeneratorService>();
+        services.AddScoped<ICustomerService, CustomerService>();
+        return services;
+    }
+
+    public static IServiceCollection ConfigureMapper(this IServiceCollection services)
+    {
+        return services.AddAutoMapper(expression =>
+        {
+            var contractsLayer = Assembly.Load(nameof(Contracts));
+            expression.AddMaps(contractsLayer);
         });
     }
 }
