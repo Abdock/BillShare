@@ -2,7 +2,7 @@
 using Contracts.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Services.Abstractions.Authentication;
+using Services.Abstractions;
 
 namespace BillShare.Controllers;
 
@@ -10,11 +10,11 @@ namespace BillShare.Controllers;
 [Route("api/[controller]")]
 public class TokenController : ControllerBase
 {
-    private readonly ITokenGeneratorService _tokenGeneratorService;
+    private readonly IServiceManager _serviceManager;
 
-    public TokenController(ITokenGeneratorService tokenGeneratorService)
+    public TokenController(IServiceManager serviceManager)
     {
-        _tokenGeneratorService = tokenGeneratorService;
+        _serviceManager = serviceManager;
     }
 
     [HttpGet]
@@ -29,7 +29,7 @@ public class TokenController : ControllerBase
     [Route("refresh")]
     public async Task<ActionResult<AuthenticationToken>> RefreshToken([FromBody] RefreshJwtTokenDto dto)
     {
-        var token = await _tokenGeneratorService.RefreshJwtTokenAsync(dto.RefreshToken);
+        var token = await _serviceManager.TokenGeneratorService.RefreshJwtTokenAsync(dto.RefreshToken);
         return Ok(token);
     }
 }

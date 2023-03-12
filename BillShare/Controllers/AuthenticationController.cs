@@ -1,6 +1,6 @@
 ﻿using Contracts.Authentication;
 using Microsoft.AspNetCore.Mvc;
-using Services.Abstractions.Authentication;
+using Services.Abstractions;
 
 namespace BillShare.Controllers;
 
@@ -8,18 +8,18 @@ namespace BillShare.Controllers;
 [Route("[controller]")]
 public class AuthenticationController : ControllerBase
 {
-    private readonly IAuthenticationService _authenticationService;
+    private readonly IServiceManager _serviceManager;
 
-    public AuthenticationController(IAuthenticationService authenticationService)
+    public AuthenticationController(IServiceManager serviceManager)
     {
-        _authenticationService = authenticationService;
+        _serviceManager = serviceManager;
     }
 
     [HttpPost]
     [Route("register")]
     public async Task<ActionResult<AuthenticationToken>> Register([FromBody] SignUpUserCredentials credentials)
     {
-        var token = await _authenticationService.SignUpAsync(credentials);
+        var token = await _serviceManager.AuthenticationService.SignUpAsync(credentials);
         return Ok(token);
     }
 
@@ -27,7 +27,7 @@ public class AuthenticationController : ControllerBase
     [Route("login")]
     public async Task<ActionResult<AuthenticationToken>> Login([FromBody] SignInUserCredentials credentials)
     {
-        var token = await _authenticationService.SignInAsync(credentials);
+        var token = await _serviceManager.AuthenticationService.SignInAsync(credentials);
         return Ok(token);
     }
 }

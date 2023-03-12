@@ -12,10 +12,12 @@ public class UnitOfWork : IUnitOfWork
         _context = context;
         CustomerRepository = new CustomerRepository(context);
         RefreshTokenRepository = new RefreshTokenRepository(context);
+        FriendshipRepository = new FriendshipRepository(context);
     }
 
     public ICustomerRepository CustomerRepository { get; }
     public IRefreshTokenRepository RefreshTokenRepository { get; }
+    public IFriendshipRepository FriendshipRepository { get; }
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

@@ -7,10 +7,10 @@ using Infrastructure.Authentication.Extensions;
 using Infrastructure.Authentication.Service;
 using Infrastructure.Database.Context;
 using Infrastructure.Repositories;
+using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Services;
 using Services.Abstractions;
 using Services.Abstractions.Authentication;
 
@@ -18,7 +18,8 @@ namespace BillShare.Extensions;
 
 public static class ServiceExtensions
 {
-    public static IServiceCollection ConfigureAuthenticationAndAuthorization(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection ConfigureAuthenticationAndAuthorization(this IServiceCollection services,
+        IConfiguration configuration)
     {
         var section = configuration.GetSection(ConfigurationConstants.JwtConfig);
         var options = section.Get<AuthenticationOptions>()!;
@@ -76,10 +77,8 @@ public static class ServiceExtensions
 
     public static IServiceCollection ConfigureCustomServices(this IServiceCollection services)
     {
-        services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
-        services.AddScoped<ITokenGeneratorService, TokenGeneratorService>();
-        services.AddScoped<ICustomerService, CustomerService>();
+        services.AddScoped<IServiceManager, ServiceManager>();
         return services;
     }
 
