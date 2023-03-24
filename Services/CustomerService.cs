@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Contracts.Authentication;
-using Contracts.Responses;
+using Contracts.Responses.Customers;
 using Domain.Enums;
 using Domain.Models;
 using Domain.Repositories;

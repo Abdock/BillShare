@@ -14,12 +14,14 @@ public class ServiceManager : IServiceManager
     private readonly Lazy<IAuthenticationService> _lazyAuthenticationService;
     private readonly Lazy<IFriendshipService> _lazyFriendshipService;
     private readonly Lazy<ITokenGeneratorService> _lazyTokenGeneratorService;
+    private readonly Lazy<IPaginationService> _lazyPaginationService;
 
     public ServiceManager(IMapper mapper, IUnitOfWork unitOfWork, IPasswordHasher passwordHasher,
         AuthenticationOptions authenticationOptions)
     {
+        _lazyPaginationService = new Lazy<IPaginationService>(new PaginationService());
         _lazyCustomerService = new Lazy<ICustomerService>(new CustomerService(unitOfWork, mapper, passwordHasher));
-        _lazyFriendshipService = new Lazy<IFriendshipService>(new FriendshipService(unitOfWork, mapper));
+        _lazyFriendshipService = new Lazy<IFriendshipService>(new FriendshipService(unitOfWork, mapper, PaginationService));
         _lazyTokenGeneratorService =
             new Lazy<ITokenGeneratorService>(new TokenGeneratorService(authenticationOptions, unitOfWork, mapper));
         _lazyAuthenticationService =
@@ -30,4 +32,5 @@ public class ServiceManager : IServiceManager
     public IFriendshipService FriendshipService => _lazyFriendshipService.Value;
     public IAuthenticationService AuthenticationService => _lazyAuthenticationService.Value;
     public ITokenGeneratorService TokenGeneratorService => _lazyTokenGeneratorService.Value;
+    public IPaginationService PaginationService => _lazyPaginationService.Value;
 }

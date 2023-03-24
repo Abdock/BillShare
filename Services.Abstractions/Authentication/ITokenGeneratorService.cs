@@ -1,5 +1,6 @@
 ﻿using Contracts.Authentication;
 using Contracts.Responses;
+using Contracts.Responses.Customers;
 
 namespace Services.Abstractions.Authentication;
 

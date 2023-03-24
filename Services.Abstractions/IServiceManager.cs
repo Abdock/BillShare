@@ -8,4 +8,5 @@ public interface IServiceManager
     IFriendshipService FriendshipService { get; }
     IAuthenticationService AuthenticationService { get; }
     ITokenGeneratorService TokenGeneratorService { get; }
+    IPaginationService PaginationService { get; }
 }

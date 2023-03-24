@@ -1,4 +1,5 @@
-﻿using Domain.Exceptions;
+﻿using Domain.Enums;
+using Domain.Exceptions;
 using Domain.Models;
 using Domain.Repositories;
 using Infrastructure.Database.Context;
@@ -62,5 +63,60 @@ public class CustomerRepository : ICustomerRepository
     public async Task AddCustomerAsync(Customer customer, CancellationToken cancellationToken = default)
     {
         await _context.AddAsync(customer, cancellationToken);
+    }
+
+    public async Task<IEnumerable<Customer>> GetFriendsAsync(Guid customerId, int skipCount, int takeCount,
+        CancellationToken cancellationToken = default)
+    {
+        return await _context.Friendships
+            .Where(e => e.UserId == customerId && e.StatusId == FriendshipStatusId.Accepted)
+            .Skip(skipCount)
+            .Take(takeCount)
+            .Include(e => e.Friend)
+            .Select(e => e.Friend)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<int> TotalFriendsCountAsync(Guid customerId, CancellationToken cancellationToken = default)
+    {
+        return await _context.Friendships
+            .Where(e => e.UserId == customerId && e.StatusId == FriendshipStatusId.Accepted)
+            .CountAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<Customer>> GetIncomingFriendsAsync(Guid customerId, int skipCount, int takeCount, CancellationToken cancellationToken = default)
+    {
+        return await _context.Friendships
+            .Where(e => e.FriendId == customerId && e.StatusId == FriendshipStatusId.Pending)
+            .Skip(skipCount)
+            .Take(takeCount)
+            .Include(e => e.Friend)
+            .Select(e => e.Friend)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<int> TotalIncomingFriendsCountAsync(Guid customerId, CancellationToken cancellationToken = default)
+    {
+        return await _context.Friendships
+            .Where(e => e.FriendId == customerId && e.StatusId == FriendshipStatusId.Pending)
+            .CountAsync(cancellationToken);
+    }
+    
+    public async Task<IEnumerable<Customer>> GetOutcomingFriendsAsync(Guid customerId, int skipCount, int takeCount, CancellationToken cancellationToken = default)
+    {
+        return await _context.Friendships
+            .Where(e => e.UserId == customerId && e.StatusId == FriendshipStatusId.Pending)
+            .Skip(skipCount)
+            .Take(takeCount)
+            .Include(e => e.Friend)
+            .Select(e => e.Friend)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<int> TotalOutcomingFriendsCountAsync(Guid customerId, CancellationToken cancellationToken = default)
+    {
+        return await _context.Friendships
+            .Where(e => e.UserId == customerId && e.StatusId == FriendshipStatusId.Pending)
+            .CountAsync(cancellationToken);
     }
 }

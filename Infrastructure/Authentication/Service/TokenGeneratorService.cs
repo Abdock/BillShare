@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using AutoMapper;
 using Contracts.Authentication;
 using Contracts.Responses;
+using Contracts.Responses.Customers;
 using Domain.Models;
 using Domain.Repositories;
 using Infrastructure.Authentication.Constants;

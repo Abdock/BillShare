@@ -42,4 +42,19 @@ public class FriendshipRepository : IFriendshipRepository
 
         return friendship;
     }
+
+    public async Task<IEnumerable<Friendship>> GetFriendshipsAsync(int skipCount, int takeCount,
+        CancellationToken token = default)
+    {
+        var friendships = await _context.Friendships
+            .Skip(skipCount)
+            .Take(takeCount)
+            .ToListAsync(token);
+        return friendships;
+    }
+
+    public async Task<int> TotalCountAsync(CancellationToken token = default)
+    {
+        return await _context.Friendships.CountAsync(token);
+    }
 }

@@ -1,5 +1,8 @@
 ﻿using BillShare.Extensions;
 using Contracts.DTOs.Friendships;
+using Contracts.DTOs.General;
+using Contracts.Responses.Friends;
+using Contracts.Responses.General;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Abstractions;
@@ -28,5 +31,52 @@ public class FriendsController : ControllerBase
         };
         await _serviceManager.FriendshipService.CreateFriendshipAsync(dto);
         return Ok();
+    }
+
+    [HttpGet]
+    [Authorize]
+    public async Task<ActionResult<PagedResponse<UserFriendResponse>>> GetFriends([FromQuery] PaginationDto dto)
+    {
+        var url = Request.Path.Value!;
+        var request = new GetUserFriendsDto
+        {
+            UserId = User.GetUserId(),
+            Pagination = dto,
+            EndpointUrl = new Uri(url)
+        };
+        var response = await _serviceManager.FriendshipService.GetPagedUserFriendsAsync(request);
+        return Ok(response);
+    }
+    
+    [HttpGet]
+    [Authorize]
+    [Route("outcoming")]
+    public async Task<ActionResult<PagedResponse<UserFriendResponse>>> GetOutComingFriends([FromQuery] PaginationDto dto)
+    {
+        var url = Request.Path.Value!;
+        var request = new GetUserFriendsDto
+        {
+            UserId = User.GetUserId(),
+            Pagination = dto,
+            EndpointUrl = new Uri(url)
+        };
+        var response = await _serviceManager.FriendshipService.GetPagedUserOutcomeFriendsAsync(request);
+        return Ok(response);
+    }
+    
+    [HttpGet]
+    [Authorize]
+    [Route("incoming")]
+    public async Task<ActionResult<PagedResponse<UserFriendResponse>>> GetInComingFriends([FromQuery] PaginationDto dto)
+    {
+        var url = Request.Path.Value!;
+        var request = new GetUserFriendsDto
+        {
+            UserId = User.GetUserId(),
+            Pagination = dto,
+            EndpointUrl = new Uri(url)
+        };
+        var response = await _serviceManager.FriendshipService.GetPagedUserIncomeFriendsAsync(request);
+        return Ok(response);
     }
 }
