@@ -1,4 +1,5 @@
-﻿using Domain.Exceptions;
+﻿using Domain.Enums;
+using Domain.Exceptions;
 using Domain.Models;
 using Domain.Repositories;
 using Infrastructure.Database.Context;
@@ -41,6 +42,30 @@ public class FriendshipRepository : IFriendshipRepository
         }
 
         return friendship;
+    }
+
+    public async Task AcceptFriendshipAsync(Guid friendshipId, CancellationToken token = default)
+    {
+        var friendship = await _context.Friendships.FirstOrDefaultAsync(e => e.Id == friendshipId, token);
+        if (friendship == null)
+        {
+            throw new NotFoundException($"Friendship request by id {friendshipId} not found");
+        }
+
+        friendship.StatusId = FriendshipStatusId.Accepted;
+        _context.Friendships.Update(friendship);
+    }
+
+    public async Task RejectFriendshipAsync(Guid friendshipId, CancellationToken token = default)
+    {
+        var friendship = await _context.Friendships.FirstOrDefaultAsync(e => e.Id == friendshipId, token);
+        if (friendship == null)
+        {
+            throw new NotFoundException($"Friendship request by id {friendshipId} not found");
+        }
+
+        friendship.StatusId = FriendshipStatusId.Rejected;
+        _context.Friendships.Update(friendship);
     }
 
     public async Task<IEnumerable<Friendship>> GetFriendshipsAsync(int skipCount, int takeCount,
