@@ -13,11 +13,15 @@ public class UnitOfWork : IUnitOfWork
         CustomerRepository = new CustomerRepository(context);
         RefreshTokenRepository = new RefreshTokenRepository(context);
         FriendshipRepository = new FriendshipRepository(context);
+        IconRepository = new IconRepository(context);
+        CustomExpenseCategoriesRepository = new CustomExpenseCategoryRepository(context);
     }
 
     public ICustomerRepository CustomerRepository { get; }
     public IRefreshTokenRepository RefreshTokenRepository { get; }
     public IFriendshipRepository FriendshipRepository { get; }
+    public IIconRepository IconRepository { get; }
+    public ICustomExpenseCategoriesRepository CustomExpenseCategoriesRepository { get; }
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

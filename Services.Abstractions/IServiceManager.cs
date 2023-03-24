@@ -9,4 +9,6 @@ public interface IServiceManager
     IAuthenticationService AuthenticationService { get; }
     ITokenGeneratorService TokenGeneratorService { get; }
     IPaginationService PaginationService { get; }
+    IIconService IconService { get; }
+    IStorageService StorageService { get; }
 }
