@@ -34,17 +34,19 @@ public class CustomExpenseCategoryRepository : ICustomExpenseCategoriesRepositor
         return expenseCategory;
     }
 
-    public async Task<IEnumerable<CustomExpenseCategory>> GetAllExpenseCategories(
+    public async Task<IEnumerable<CustomExpenseCategory>> GetAllCustomerExpenseCategories(Guid customerId,
         CancellationToken cancellationToken = default)
     {
-        return await _context.CustomExpenseCategories.ToListAsync(cancellationToken);
+        return await _context.CustomExpenseCategories
+            .Where(e=>e.CustomerId==customerId)
+            .ToListAsync(cancellationToken);
     }
 
-    public async Task ChangeExpenseCategoryNameAsync(Guid expenseCategoryId, string name,
+    public async Task ChangeExpenseCategoryNameAsync(Guid userId, Guid expenseCategoryId, string name,
         CancellationToken cancellationToken = default)
     {
         var expenseCategory = await _context.CustomExpenseCategories
-            .FirstOrDefaultAsync(e => e.Id == expenseCategoryId, cancellationToken);
+            .FirstOrDefaultAsync(e => e.Id == expenseCategoryId && e.CustomerId == userId, cancellationToken);
         if (expenseCategory == null)
         {
             throw new NotFoundException($"Expense category by id {expenseCategoryId} not found");

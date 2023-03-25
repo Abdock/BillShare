@@ -79,4 +79,32 @@ public class FriendsController : ControllerBase
         var response = await _serviceManager.FriendshipService.GetPagedUserIncomeFriendsAsync(request);
         return Ok(response);
     }
+
+    [HttpPost]
+    [Authorize]
+    [Route("{friendshipRequestId:guid}/accept")]
+    public async Task<ActionResult> AcceptFriendship([FromRoute] Guid friendshipRequestId)
+    {
+        var dto = new AcceptFriendshipDto
+        {
+            UserId = User.GetUserId(),
+            FriendshipId = friendshipRequestId
+        };
+        await _serviceManager.FriendshipService.AcceptFriendshipAsync(dto);
+        return NoContent();
+    }
+
+    [HttpPost]
+    [Authorize]
+    [Route("{friendshipRequestId:guid}/decline")]
+    public async Task<ActionResult> DeclineFriendship([FromRoute] Guid friendshipRequestId)
+    {
+        var dto = new DeclineFriendshipDto
+        {
+            UserId = User.GetUserId(),
+            FriendshipId = friendshipRequestId
+        };
+        await _serviceManager.FriendshipService.DeclineFriendshipAsync(dto);
+        return NoContent();
+    }
 }

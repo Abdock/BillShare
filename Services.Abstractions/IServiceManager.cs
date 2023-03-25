@@ -10,5 +10,6 @@ public interface IServiceManager
     ITokenGeneratorService TokenGeneratorService { get; }
     IPaginationService PaginationService { get; }
     IIconService IconService { get; }
+    IExpenseCategoryService ExpenseCategoryService { get; }
     IStorageService StorageService { get; }
 }
