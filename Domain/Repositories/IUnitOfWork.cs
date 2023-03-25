@@ -7,6 +7,8 @@ public interface IUnitOfWork
     IFriendshipRepository FriendshipRepository { get; }
     IIconRepository IconRepository { get; }
     ICustomExpenseCategoriesRepository CustomExpenseCategoriesRepository { get; }
+    IExpenseTypeRepository ExpenseTypeRepository { get; }
+    IExpenseRepository ExpenseRepository { get; }
     
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

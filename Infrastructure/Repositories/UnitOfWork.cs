@@ -15,6 +15,8 @@ public class UnitOfWork : IUnitOfWork
         FriendshipRepository = new FriendshipRepository(context);
         IconRepository = new IconRepository(context);
         CustomExpenseCategoriesRepository = new CustomExpenseCategoryRepository(context);
+        ExpenseTypeRepository = new ExpenseTypeRepository(context);
+        ExpenseRepository = new ExpenseRepository(context);
     }
 
     public ICustomerRepository CustomerRepository { get; }
@@ -22,6 +24,8 @@ public class UnitOfWork : IUnitOfWork
     public IFriendshipRepository FriendshipRepository { get; }
     public IIconRepository IconRepository { get; }
     public ICustomExpenseCategoriesRepository CustomExpenseCategoriesRepository { get; }
+    public IExpenseTypeRepository ExpenseTypeRepository { get; }
+    public IExpenseRepository ExpenseRepository { get; }
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

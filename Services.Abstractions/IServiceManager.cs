@@ -11,5 +11,6 @@ public interface IServiceManager
     IPaginationService PaginationService { get; }
     IIconService IconService { get; }
     IExpenseCategoryService ExpenseCategoryService { get; }
+    IExpenseTypeService ExpenseTypeService { get; }
     IStorageService StorageService { get; }
 }

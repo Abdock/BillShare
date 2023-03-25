@@ -10,11 +10,11 @@ namespace BillShare.Controllers;
 
 [ApiController]
 [Route("expense-categories")]
-public class ExpenseCategoryController : ControllerBase
+public class ExpenseCategoriesController : ControllerBase
 {
     private readonly IServiceManager _serviceManager;
 
-    public ExpenseCategoryController(IServiceManager serviceManager)
+    public ExpenseCategoriesController(IServiceManager serviceManager)
     {
         _serviceManager = serviceManager;
     }
