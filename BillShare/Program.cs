@@ -8,8 +8,7 @@ builder.Services.ConfigureControllers();
 builder.Services.ConfigureMapper();
 builder.Services.ConfigureCors();
 builder.Services.ConfigureAuthenticationAndAuthorization(builder.Configuration);
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.ConfigureSwagger();
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
