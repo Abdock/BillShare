@@ -19,4 +19,5 @@ public class Expense : BaseEntity
     public ExpenseStatus Status { get; set; } = default!;
     public ICollection<ExpenseItem> ExpenseItems { get; set; } = new HashSet<ExpenseItem>();
     public ICollection<ExpenseParticipant> ExpenseParticipants { get; set; } = new HashSet<ExpenseParticipant>();
+    public ICollection<ExpenseMultiplier> ExpenseMultipliers { get; init; } = new HashSet<ExpenseMultiplier>();
 }

@@ -58,7 +58,7 @@ public static class ServiceExtensions
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         return services.AddDbContext<AppDbContext>(options =>
         {
-            options.UseSqlServer(configuration.GetConnectionString(ConfigurationConstants.DefaultConnectionString));
+            options.UseNpgsql(configuration.GetConnectionString(ConfigurationConstants.DefaultConnectionString));
         });
     }
 
