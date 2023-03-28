@@ -94,18 +94,11 @@ public static class ServiceExtensions
     
     public static void ConfigureSwagger(this IServiceCollection services)
     {
+        const string authScheme = JwtBearerDefaults.AuthenticationScheme;
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
-        const string authScheme = JwtBearerDefaults.AuthenticationScheme;
         services.AddSwaggerGen(options =>
         {
-            options.SwaggerDoc($"v {1}", new OpenApiInfo
-            {
-                Title = "Bill share API",
-                Version = $"v {1}",
-                Description = "Bill share API Services."
-            });
-            options.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
             options.AddSecurityDefinition(authScheme, new OpenApiSecurityScheme
             {
                 Name = "Authorization",

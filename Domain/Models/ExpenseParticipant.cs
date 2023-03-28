@@ -11,4 +11,7 @@ public class ExpenseParticipant : BaseEntity
     public Expense Expense { get; init; } = default!;
     public ExpenseParticipantStatusId StatusId { get; init; }
     public ExpenseParticipantStatus Status { get; init; } = default!;
+
+    public ICollection<ExpenseParticipantItem> ExpenseParticipantItems { get; init; } =
+        new HashSet<ExpenseParticipantItem>();
 }

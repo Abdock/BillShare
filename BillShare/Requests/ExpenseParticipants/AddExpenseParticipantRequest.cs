@@ -1,6 +1,6 @@
 ﻿namespace BillShare.Requests.ExpenseParticipants;
 
-public record AddParticipantRequest
+public record AddExpenseParticipantRequest
 {
     public required Guid UserId { get; init; }
 }

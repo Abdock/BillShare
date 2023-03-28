@@ -13,4 +13,5 @@ public interface IServiceManager
     IExpenseCategoryService ExpenseCategoryService { get; }
     IExpenseTypeService ExpenseTypeService { get; }
     IStorageService StorageService { get; }
+    IExpenseService ExpenseService { get; }
 }

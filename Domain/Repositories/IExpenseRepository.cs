@@ -13,4 +13,22 @@ public interface IExpenseRepository
     Task LockExpenseAsync(Guid customerId, Guid expenseId, CancellationToken cancellationToken = default);
 
     Task UnlockExpenseAsync(Guid customerId, Guid expenseId, CancellationToken cancellationToken = default);
+
+    Task<int> TotalCountAsync(Guid customerId, CancellationToken cancellationToken = default);
+
+    Task AddParticipantAsync(Guid expenseId, Guid customerId, CancellationToken cancellationToken = default);
+
+    Task DeleteParticipantAsync(Guid expenseId, Guid participantId, CancellationToken cancellationToken = default);
+
+    Task SelectItemAsync(Guid expenseId, Guid expenseItemId, Guid customerId,
+        CancellationToken cancellationToken = default);
+
+    Task UnselectItemAsync(Guid expenseId, Guid expenseItemId, Guid customerId,
+        CancellationToken cancellationToken = default);
+
+    Task DeleteItemAsync(Guid expenseId, Guid expenseItemId, Guid customerId,
+        CancellationToken cancellationToken = default);
+
+    Task AddItemAsync(Guid expenseId, Guid customerId, ExpenseItem expenseItem,
+        CancellationToken cancellationToken = default);
 }

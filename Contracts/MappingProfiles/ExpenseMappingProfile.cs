@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Contracts.Constants;
+using Contracts.DTOs.Expenses;
 using Contracts.Responses.Expenses;
 using Domain.Models;
 
@@ -16,5 +17,8 @@ public class ExpenseMappingProfile : Profile
                 expression.MapFrom(e => e.ExpenseParticipants))
             .ForMember(e => e.Multipliers, expression =>
                 expression.MapFrom(e => e.ExpenseMultipliers));
+        CreateMap<CreateExpenseDto, Expense>(MemberList.Source)
+            .ForMember(e => e.Amount, expression =>
+                expression.MapFrom(e => (decimal) e.Amount));
     }
 }

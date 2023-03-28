@@ -1,4 +1,5 @@
 ﻿using BillShare.Requests.ExpenseItems;
+using BillShare.Requests.ExpenseMultipliers;
 using BillShare.Requests.ExpenseParticipants;
 using Domain.Enums;
 
@@ -10,6 +11,9 @@ public record CreateExpenseRequest
     public required Guid CategoryId { get; init; }
     public required Guid AccountId { get; init; }
     public required int Amount { get; init; }
-    public ICollection<AddParticipantRequest> Participants { get; init; } = new List<AddParticipantRequest>();
-    public ICollection<ExpenseItemRequest> Items { get; init; } = new List<ExpenseItemRequest>();
+    public ICollection<AddExpenseParticipantRequest> Participants { get; init; } = new List<AddExpenseParticipantRequest>();
+    public ICollection<AddExpenseItemRequest> Items { get; init; } = new List<AddExpenseItemRequest>();
+
+    public ICollection<CreateExpenseMultiplierRequest> Multipliers { get; init; } =
+        new List<CreateExpenseMultiplierRequest>();
 }

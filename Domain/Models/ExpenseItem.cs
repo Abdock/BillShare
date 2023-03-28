@@ -12,4 +12,7 @@ public class ExpenseItem : BaseEntity
     public decimal Amount { get; init; }
     public ExpenseItemStatusId StatusId { get; init; }
     public ExpenseItemStatus Status { get; init; } = default!;
+
+    public ICollection<ExpenseParticipantItem> ExpenseParticipantItems { get; init; } =
+        new HashSet<ExpenseParticipantItem>();
 }

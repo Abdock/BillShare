@@ -18,10 +18,21 @@ public class ExpenseRepository : IExpenseRepository
 
     public async Task AddExpenseAsync(Expense expense, CancellationToken cancellationToken = default)
     {
+        var participants = expense.ExpenseParticipants;
+        var items = expense.ExpenseItems;
+        var participantItems = participants
+            .SelectMany(e => items, (participant, item) => new ExpenseParticipantItem
+            {
+                ExpenseParticipantId = participant.Id,
+                ItemId = item.Id,
+                StatusId = ExpenseParticipantItemStatusId.Unselected
+            }).ToList();
         await _context.Expenses.AddAsync(expense, cancellationToken);
+        await _context.ExpenseParticipantItems.AddRangeAsync(participantItems, cancellationToken);
     }
 
-    public async Task<Expense> GetExpenseByIdAsync(Guid expenseId, Guid customerId, CancellationToken cancellationToken = default)
+    public async Task<Expense> GetExpenseByIdAsync(Guid expenseId, Guid customerId,
+        CancellationToken cancellationToken = default)
     {
         var expense = await _context.ExpenseParticipants
             .Where(e => e.CustomerId == customerId && e.ExpenseId == expenseId)
@@ -53,7 +64,7 @@ public class ExpenseRepository : IExpenseRepository
         var expense = await _context.ExpenseParticipants
             .Where(e => e.CustomerId == customerId && e.ExpenseId == expenseId)
             .Include(e => e.Expense)
-            .Select(e=>e.Expense)
+            .Select(e => e.Expense)
             .FirstOrDefaultAsync(cancellationToken);
         if (expense == null)
         {
@@ -69,7 +80,7 @@ public class ExpenseRepository : IExpenseRepository
         var expense = await _context.ExpenseParticipants
             .Where(e => e.CustomerId == customerId && e.ExpenseId == expenseId)
             .Include(e => e.Expense)
-            .Select(e=>e.Expense)
+            .Select(e => e.Expense)
             .FirstOrDefaultAsync(cancellationToken);
         if (expense == null)
         {
@@ -78,5 +89,147 @@ public class ExpenseRepository : IExpenseRepository
 
         expense.StatusId = ExpenseStatusId.Active;
         _context.Expenses.Update(expense);
+    }
+
+    public async Task<int> TotalCountAsync(Guid customerId, CancellationToken cancellationToken = default)
+    {
+        return await _context.ExpenseParticipants
+            .Where(e => e.CustomerId == customerId)
+            .CountAsync(cancellationToken);
+    }
+
+    public async Task AddParticipantAsync(Guid expenseId, Guid customerId,
+        CancellationToken cancellationToken = default)
+    {
+        var isCustomerExists = await _context.Customers.AnyAsync(e => e.Id == customerId, cancellationToken);
+        if (isCustomerExists)
+        {
+            throw new NotFoundException($"Customer with id {customerId} not found");
+        }
+
+        var isExpenseExists = await _context.Expenses.AnyAsync(e => e.Id == expenseId, cancellationToken);
+        if (isExpenseExists)
+        {
+            throw new NotFoundException($"Expense with id {expenseId} not found");
+        }
+
+        var participant = new ExpenseParticipant
+        {
+            ExpenseId = expenseId,
+            CustomerId = customerId,
+            StatusId = ExpenseParticipantStatusId.Unpaid
+        };
+        await _context.ExpenseParticipants.AddAsync(participant, cancellationToken);
+    }
+
+    public async Task DeleteParticipantAsync(Guid expenseId, Guid participantId,
+        CancellationToken cancellationToken = default)
+    {
+        var participant = await _context.ExpenseParticipants.FirstOrDefaultAsync(e => e.Id == participantId && e.ExpenseId == expenseId,
+            cancellationToken);
+        if (participant == null)
+        {
+            throw new NotFoundException($"Expense participant with id {participantId} in expense {expenseId} not found");
+        }
+
+        _context.ExpenseParticipants.Remove(participant);
+    }
+
+    public async Task SelectItemAsync(Guid expenseId, Guid expenseItemId, Guid customerId,
+        CancellationToken cancellationToken = default)
+    {
+        var expense = await _context.Expenses
+            .Where(e => e.Id == expenseId)
+            .Include(e => e.ExpenseParticipants)
+            .ThenInclude(e => e.ExpenseParticipantItems)
+            .FirstOrDefaultAsync(cancellationToken);
+        if (expense == null)
+        {
+            throw new NotFoundException($"Expense with id {expenseId} not found");
+        }
+
+        var participant = expense.ExpenseParticipants.FirstOrDefault(e => e.CustomerId == customerId);
+        if (participant == null)
+        {
+            throw new NotFoundException($"Expense with id {expenseId} not contain customer with id {customerId}");
+        }
+
+        var item = participant.ExpenseParticipantItems.FirstOrDefault(e =>
+            e.ItemId == expenseItemId && e.ExpenseParticipantId == customerId);
+        if (item == null)
+        {
+            throw new NotFoundException($"Expense with id {expenseId} not contain item with id {expenseItemId}");
+        }
+
+        item.StatusId = ExpenseParticipantItemStatusId.Selected;
+        _context.ExpenseParticipantItems.Update(item);
+    }
+
+    public async Task UnselectItemAsync(Guid expenseId, Guid expenseItemId, Guid customerId,
+        CancellationToken cancellationToken = default)
+    {
+        var expense = await _context.Expenses
+            .Where(e => e.Id == expenseId)
+            .Include(e => e.ExpenseParticipants)
+            .ThenInclude(e => e.ExpenseParticipantItems)
+            .FirstOrDefaultAsync(cancellationToken);
+        if (expense == null)
+        {
+            throw new NotFoundException($"Expense with id {expenseId} not found");
+        }
+
+        var participant = expense.ExpenseParticipants.FirstOrDefault(e => e.CustomerId == customerId);
+        if (participant == null)
+        {
+            throw new NotFoundException($"Expense with id {expenseId} not contain customer with id {customerId}");
+        }
+
+        var item = participant.ExpenseParticipantItems.FirstOrDefault(e =>
+            e.ItemId == expenseItemId && e.ExpenseParticipantId == customerId);
+        if (item == null)
+        {
+            throw new NotFoundException($"Expense with id {expenseId} not contain item with id {expenseItemId}");
+        }
+
+        item.StatusId = ExpenseParticipantItemStatusId.Unselected;
+        _context.ExpenseParticipantItems.Update(item);
+    }
+
+    public async Task DeleteItemAsync(Guid expenseId, Guid expenseItemId, Guid customerId,
+        CancellationToken cancellationToken = default)
+    {
+        var expense = await _context.Expenses
+                .Where(e => e.Id == expenseId)
+                .Include(e=>e.ExpenseParticipants)
+                .Include(e=>e.ExpenseItems)
+                .FirstOrDefaultAsync(cancellationToken);
+        if (expense == null)
+        {
+            throw new NotFoundException($"Expense with id {expenseId} not found");
+        }
+
+        var isCustomerIsParticipantOfExpense = expense.ExpenseParticipants.Any(e => e.CustomerId == customerId);
+        if (isCustomerIsParticipantOfExpense)
+        {
+            throw new NotFoundException(
+                $"Customer with id {customerId} not participant in expense with id {expenseId}");
+        }
+
+        var item = expense.ExpenseItems.FirstOrDefault(e => e.Id == expenseItemId);
+        if (item != null)
+        {
+            expense.ExpenseItems.Remove(item);
+            // TODO write algorithm to remove participant items
+        }
+    }
+
+    public async Task AddItemAsync(Guid expenseId, Guid customerId, ExpenseItem expenseItem,
+        CancellationToken cancellationToken = default)
+    {
+        var expense = await _context.Expenses.FirstOrDefaultAsync(e => e.Id == expenseId, cancellationToken);
+        if (expense == null)
+        {
+            throw new NotFoundException($"Expense with id {expenseId} not found");
+        }
     }
 }
