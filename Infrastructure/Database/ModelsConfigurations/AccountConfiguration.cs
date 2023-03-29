@@ -16,5 +16,8 @@ public class AccountConfiguration : IEntityTypeConfiguration<Account>
         builder.HasOne(e => e.Customer)
             .WithMany(e => e.Accounts)
             .HasForeignKey(e => e.UserId);
+        builder.HasOne(e => e.Status)
+            .WithMany()
+            .HasForeignKey(e=>e.StatusId);
     }
 }

@@ -74,6 +74,15 @@ public class CustomerRepository : ICustomerRepository
 
     public async Task AddCustomerAsync(Customer customer, CancellationToken cancellationToken = default)
     {
+        var account = new Account
+        {
+            Amount = 0,
+            UserId = customer.Id,
+            Name = "Cash",
+            ExternalId = null,
+            StatusId = AccountStatusId.Active
+        };
+        customer.Accounts.Add(account);
         await _context.AddAsync(customer, cancellationToken);
     }
 
