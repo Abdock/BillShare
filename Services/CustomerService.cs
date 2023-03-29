@@ -46,7 +46,7 @@ public class CustomerService : ICustomerService
 
     public async Task<CustomerResponse> GetCustomerByIdAsync(Guid customerId, CancellationToken token = default)
     {
-        var customer = await _unitOfWork.CustomerRepository.GetByIdAsync(customerId, token);
+        var customer = await _unitOfWork.CustomerRepository.GetByCustomerIdAsync(customerId, token);
         return _mapper.Map<CustomerResponse>(customer);
     }
 }

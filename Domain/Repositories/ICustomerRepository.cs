@@ -4,8 +4,11 @@ namespace Domain.Repositories;
 
 public interface ICustomerRepository
 {
-    Task<Customer> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<Customer> GetByCustomerIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<Customer> GetByEmailAsync(string email, CancellationToken cancellationToken = default);
+
+    Task<IEnumerable<Customer>> GetCustomersWithSameUsername(string username, int skipCount, int takeCount,
+        CancellationToken cancellationToken = default);
 
     Task<Customer> GetByCredentialsAsync(string username, string password,
         CancellationToken cancellationToken = default);
@@ -26,4 +29,6 @@ public interface ICustomerRepository
         CancellationToken cancellationToken = default);
 
     Task<int> TotalOutcomingFriendsCountAsync(Guid customerId, CancellationToken cancellationToken = default);
+
+    Task<int> TotalCountOfCustomersWithUsernameAsync(string username, CancellationToken cancellationToken = default);
 }

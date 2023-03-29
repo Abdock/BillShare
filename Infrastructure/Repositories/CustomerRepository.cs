@@ -17,7 +17,7 @@ public class CustomerRepository : ICustomerRepository
         _context = context;
     }
 
-    public async Task<Customer> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<Customer> GetByCustomerIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var customer = await _context.Customers.AsNoTracking().FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
         if (customer == null)
@@ -37,6 +37,18 @@ public class CustomerRepository : ICustomerRepository
         }
 
         return customer;
+    }
+
+    public async Task<IEnumerable<Customer>> GetCustomersWithSameUsername(string username, int skipCount, int takeCount,
+        CancellationToken cancellationToken = default)
+    {
+        return await _context.Customers
+            .Where(e => e.Name.ToLower().Contains(username.ToLower()))
+            .Skip(skipCount)
+            .Take(takeCount)
+            .Include(e=>e.UserFriendships)
+            .Include(e=>e.FriendFriendships)
+            .ToListAsync(cancellationToken);
     }
 
     public async Task<Customer> GetByCredentialsAsync(string username, string password,
@@ -117,6 +129,13 @@ public class CustomerRepository : ICustomerRepository
     {
         return await _context.Friendships
             .Where(e => e.UserId == customerId && e.StatusId == FriendshipStatusId.Pending)
+            .CountAsync(cancellationToken);
+    }
+
+    public async Task<int> TotalCountOfCustomersWithUsernameAsync(string username, CancellationToken cancellationToken = default)
+    {
+        return await _context.Customers
+            .Where(e => e.Name.ToLower().Contains(username.ToLower()))
             .CountAsync(cancellationToken);
     }
 }

@@ -46,6 +46,7 @@ public class ExpensesController : ControllerBase
     [Authorize]
     public async Task<ActionResult<ExpenseResponse>> CreateExpense([FromBody] CreateExpenseRequest request)
     {
+        var path = $"{Request.Host}{Request.Path}";
         var dto = new CreateExpenseDto
         {
             CreatorId = User.GetUserId(),
@@ -53,7 +54,7 @@ public class ExpensesController : ControllerBase
             CategoryId = request.CategoryId,
             AccountId = request.AccountId,
             Amount = request.Amount,
-            RemoveParticipantUrl = new Uri("")
+            RemoveParticipantUrl = new Uri(path)
         };
         var expense = await _serviceManager.ExpenseService.CreateExpenseAsync(dto);
         return CreatedAtAction("GetExpenseById", new
@@ -66,11 +67,12 @@ public class ExpensesController : ControllerBase
     [Authorize]
     public async Task<ActionResult<PagedResponse<ExpenseResponse>>> GetExpenses([FromQuery] PaginationDto pagination)
     {
+        var path = $"{Request.Host}{Request.Path}";
         var dto = new GetUserExpensesDto
         {
             UserId = User.GetUserId(),
             Pagination = pagination,
-            EndpointUrl = new Uri(Request.Path.Value!)
+            EndpointUrl = new Uri(path)
         };
         var response = await _serviceManager.ExpenseService.GetPagedExpensesAsync(dto);
         return Ok(response);
