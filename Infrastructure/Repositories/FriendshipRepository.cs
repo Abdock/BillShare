@@ -18,16 +18,38 @@ public class FriendshipRepository : IFriendshipRepository
 
     public async Task AddFriendshipAsync(Friendship friendship, CancellationToken token = default)
     {
-        var isUserExists = await _context.Customers.AnyAsync(e => e.Id == friendship.UserId, token);
-        if (!isUserExists)
+        if (friendship.FriendId == friendship.UserId)
+        {
+            throw new InvalidRequestException("Friend id and user id must be different");
+        }
+        
+        var isUserNotExists = await _context.Customers.AllAsync(e => e.Id != friendship.UserId, token);
+        if (isUserNotExists)
         {
             throw new NotFoundException($"Customer with id {friendship.UserId} not found");
         }
         
-        var isFriendExists = await _context.Customers.AnyAsync(e => e.Id == friendship.FriendId, token);
-        if (!isFriendExists)
+        var isFriendNotExists = await _context.Customers.AllAsync(e => e.Id != friendship.FriendId, token);
+        if (isFriendNotExists)
         {
             throw new NotFoundException($"Customer with id {friendship.FriendId} not found");
+        }
+
+        var isRequestExists = await _context.Friendships.AnyAsync(e =>
+            e.FriendId == friendship.FriendId && e.UserId == friendship.UserId &&
+            e.StatusId == FriendshipStatusId.Pending, token);
+        if (isRequestExists)
+        {
+            throw new FriendshipRequestExistsException(
+                $"Friendship request between user with id {friendship.UserId} and user with id {friendship.FriendId} already exists");
+        }
+        var isReverseRequestExists = await _context.Friendships.AnyAsync(e =>
+            e.FriendId == friendship.UserId && e.UserId == friendship.FriendId &&
+            e.StatusId == FriendshipStatusId.Pending, token);
+        if (isReverseRequestExists)
+        {
+            throw new FriendshipRequestExistsException(
+                $"Friendship request between user with id {friendship.UserId} and user with id {friendship.FriendId} already exists");
         }
         
         await _context.Friendships.AddAsync(friendship, token);
@@ -44,30 +66,46 @@ public class FriendshipRepository : IFriendshipRepository
         return friendship;
     }
 
-    public async Task AcceptFriendshipAsync(Guid userId, Guid friendshipId, CancellationToken token = default)
+    public async Task AcceptFriendshipAsync(Guid userId, Guid friendId, CancellationToken token = default)
     {
         var friendship = await _context.Friendships
-            .FirstOrDefaultAsync(e => e.Id == friendshipId && e.UserId == userId, token);
+            .FirstOrDefaultAsync(e =>
+                e.FriendId == userId && e.UserId == friendId && e.StatusId == FriendshipStatusId.Pending, token);
         if (friendship == null)
         {
-            throw new NotFoundException($"Friendship request by id {friendshipId} not found");
+            throw new NotFoundException($"Friendship request by id {friendId} not found");
         }
 
         friendship.StatusId = FriendshipStatusId.Accepted;
         _context.Friendships.Update(friendship);
+        var reverseFriendship = new Friendship
+        {
+            FriendId = friendId,
+            UserId = userId,
+            StatusId = FriendshipStatusId.Accepted
+        };
+        await _context.AddAsync(reverseFriendship, token);
     }
 
-    public async Task RejectFriendshipAsync(Guid userId, Guid friendshipId, CancellationToken token = default)
+    public async Task RejectFriendshipAsync(Guid userId, Guid friendId, CancellationToken token = default)
     {
         var friendship = await _context.Friendships
-            .FirstOrDefaultAsync(e => e.Id == friendshipId && e.UserId == userId, token);
+            .FirstOrDefaultAsync(e =>
+                e.FriendId == userId && e.UserId == friendId && e.StatusId == FriendshipStatusId.Pending, token);
         if (friendship == null)
         {
-            throw new NotFoundException($"Friendship request by id {friendshipId} not found");
+            throw new NotFoundException($"Friendship request by id {friendId} not found");
         }
 
         friendship.StatusId = FriendshipStatusId.Rejected;
         _context.Friendships.Update(friendship);
+        var reverseFriendship = new Friendship
+        {
+            FriendId = friendId,
+            UserId = userId,
+            StatusId = FriendshipStatusId.Accepted
+        };
+        await _context.AddAsync(reverseFriendship, token);
     }
 
     public async Task<IEnumerable<Friendship>> GetFriendshipsAsync(int skipCount, int takeCount,

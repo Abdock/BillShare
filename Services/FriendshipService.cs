@@ -85,13 +85,13 @@ public class FriendshipService : IFriendshipService
 
     public async Task AcceptFriendshipAsync(AcceptFriendshipDto dto, CancellationToken cancellationToken = default)
     {
-        await _unitOfWork.FriendshipRepository.AcceptFriendshipAsync(dto.UserId, dto.FriendshipId, cancellationToken);
+        await _unitOfWork.FriendshipRepository.AcceptFriendshipAsync(dto.UserId, dto.FriendId, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
     public async Task DeclineFriendshipAsync(DeclineFriendshipDto dto, CancellationToken cancellationToken = default)
     {
-        await _unitOfWork.FriendshipRepository.RejectFriendshipAsync(dto.UserId, dto.FriendshipId, cancellationToken);
+        await _unitOfWork.FriendshipRepository.RejectFriendshipAsync(dto.UserId, dto.FriendId, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

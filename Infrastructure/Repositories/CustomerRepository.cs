@@ -102,8 +102,8 @@ public class CustomerRepository : ICustomerRepository
             .Where(e => e.FriendId == customerId && e.StatusId == FriendshipStatusId.Pending)
             .Skip(skipCount)
             .Take(takeCount)
-            .Include(e => e.Friend)
-            .Select(e => e.Friend)
+            .Include(e => e.User)
+            .Select(e => e.User)
             .ToListAsync(cancellationToken);
     }
 

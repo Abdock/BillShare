@@ -37,7 +37,7 @@ public class FriendsController : ControllerBase
     [Authorize]
     public async Task<ActionResult<PagedResponse<UserFriendResponse>>> GetFriends([FromQuery] PaginationDto dto)
     {
-        var url = Request.Path.Value!;
+        var url = $"{Request.Host}{Request.Path.Value!}";
         var request = new GetUserFriendsDto
         {
             UserId = User.GetUserId(),
@@ -53,7 +53,7 @@ public class FriendsController : ControllerBase
     [Route("outcoming")]
     public async Task<ActionResult<PagedResponse<UserFriendResponse>>> GetOutComingFriends([FromQuery] PaginationDto dto)
     {
-        var url = Request.Path.Value!;
+        var url = $"{Request.Host}{Request.Path.Value!}";
         var request = new GetUserFriendsDto
         {
             UserId = User.GetUserId(),
@@ -69,7 +69,7 @@ public class FriendsController : ControllerBase
     [Route("incoming")]
     public async Task<ActionResult<PagedResponse<UserFriendResponse>>> GetInComingFriends([FromQuery] PaginationDto dto)
     {
-        var url = Request.Path.Value!;
+        var url = $"{Request.Host}{Request.Path.Value!}";
         var request = new GetUserFriendsDto
         {
             UserId = User.GetUserId(),
@@ -82,13 +82,13 @@ public class FriendsController : ControllerBase
 
     [HttpPost]
     [Authorize]
-    [Route("{friendshipRequestId:guid}/accept")]
-    public async Task<ActionResult> AcceptFriendship([FromRoute] Guid friendshipRequestId)
+    [Route("{userId:guid}/accept")]
+    public async Task<ActionResult> AcceptFriendship([FromRoute] Guid userId)
     {
         var dto = new AcceptFriendshipDto
         {
             UserId = User.GetUserId(),
-            FriendshipId = friendshipRequestId
+            FriendId = userId
         };
         await _serviceManager.FriendshipService.AcceptFriendshipAsync(dto);
         return NoContent();
@@ -96,13 +96,13 @@ public class FriendsController : ControllerBase
 
     [HttpPost]
     [Authorize]
-    [Route("{friendshipRequestId:guid}/decline")]
-    public async Task<ActionResult> DeclineFriendship([FromRoute] Guid friendshipRequestId)
+    [Route("{userId:guid}/decline")]
+    public async Task<ActionResult> DeclineFriendship([FromRoute] Guid userId)
     {
         var dto = new DeclineFriendshipDto
         {
             UserId = User.GetUserId(),
-            FriendshipId = friendshipRequestId
+            FriendId = userId
         };
         await _serviceManager.FriendshipService.DeclineFriendshipAsync(dto);
         return NoContent();
