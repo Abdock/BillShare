@@ -24,6 +24,7 @@ public class ExpenseCategoryService : IExpenseCategoryService
         var category = _mapper.Map<CustomExpenseCategory>(dto);
         await _unitOfWork.CustomExpenseCategoriesRepository.AddExpenseCategoryAsync(category, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+        category.Icon = await _unitOfWork.IconRepository.GetIconAsync(dto.IconId, cancellationToken);
         return _mapper.Map<ExpenseCategoryResponse>(category);
     }
 

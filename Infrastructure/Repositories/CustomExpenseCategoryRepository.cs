@@ -18,6 +18,19 @@ public class CustomExpenseCategoryRepository : ICustomExpenseCategoriesRepositor
     public async Task AddExpenseCategoryAsync(CustomExpenseCategory expenseCategory,
         CancellationToken cancellationToken = default)
     {
+        var icon = await _context.Icons.FirstOrDefaultAsync(e => e.Id == expenseCategory.IconId, cancellationToken);
+        if (icon == null)
+        {
+            throw new NotFoundException($"Icon with id {expenseCategory.IconId} not found");
+        }
+
+        if (icon.ExpenseCategoryId == null)
+        {
+            throw new InvalidOperationException(
+                $"Customer {expenseCategory.CustomerId} try to reassign icon {icon.Id} to new category");
+        }
+        icon.ExpenseCategoryId = expenseCategory.Id;
+        _context.Icons.Update(icon);
         await _context.CustomExpenseCategories.AddAsync(expenseCategory, cancellationToken);
     }
 
@@ -25,6 +38,7 @@ public class CustomExpenseCategoryRepository : ICustomExpenseCategoriesRepositor
         CancellationToken cancellationToken = default)
     {
         var expenseCategory = await _context.CustomExpenseCategories
+            .Include(e=>e.Icon)
             .FirstOrDefaultAsync(e => e.Id == expenseCategoryId, cancellationToken);
         if (expenseCategory == null)
         {
@@ -37,9 +51,11 @@ public class CustomExpenseCategoryRepository : ICustomExpenseCategoriesRepositor
     public async Task<IEnumerable<CustomExpenseCategory>> GetAllCustomerExpenseCategories(Guid customerId,
         CancellationToken cancellationToken = default)
     {
-        return await _context.CustomExpenseCategories
+        var result = await _context.CustomExpenseCategories
             .Where(e=>e.CustomerId==customerId)
+            .Include(e=>e.Icon)
             .ToListAsync(cancellationToken);
+        return result;
     }
 
     public async Task ChangeExpenseCategoryNameAsync(Guid userId, Guid expenseCategoryId, string name,
