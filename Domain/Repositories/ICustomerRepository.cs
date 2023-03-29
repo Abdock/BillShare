@@ -25,10 +25,10 @@ public interface ICustomerRepository
 
     Task<int> TotalIncomingFriendsCountAsync(Guid customerId, CancellationToken cancellationToken = default);
     
-    Task<IEnumerable<Customer>> GetOutcomingFriendsAsync(Guid customerId, int skipCount, int takeCount,
+    Task<IEnumerable<Customer>> GetOutComingFriendsAsync(Guid customerId, int skipCount, int takeCount,
         CancellationToken cancellationToken = default);
 
-    Task<int> TotalOutcomingFriendsCountAsync(Guid customerId, CancellationToken cancellationToken = default);
+    Task<int> TotalOutComingFriendsCountAsync(Guid customerId, CancellationToken cancellationToken = default);
 
     Task<int> TotalCountOfCustomersWithUsernameAsync(string username, CancellationToken cancellationToken = default);
 }

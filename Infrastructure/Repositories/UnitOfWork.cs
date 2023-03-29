@@ -17,6 +17,7 @@ public class UnitOfWork : IUnitOfWork
         CustomExpenseCategoriesRepository = new CustomExpenseCategoryRepository(context);
         ExpenseTypeRepository = new ExpenseTypeRepository(context);
         ExpenseRepository = new ExpenseRepository(context);
+        AccountRepository = new AccountRepository(context);
     }
 
     public ICustomerRepository CustomerRepository { get; }
@@ -26,6 +27,7 @@ public class UnitOfWork : IUnitOfWork
     public ICustomExpenseCategoriesRepository CustomExpenseCategoriesRepository { get; }
     public IExpenseTypeRepository ExpenseTypeRepository { get; }
     public IExpenseRepository ExpenseRepository { get; }
+    public IAccountRepository AccountRepository { get; }
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

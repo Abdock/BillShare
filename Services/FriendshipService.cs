@@ -52,8 +52,8 @@ public class FriendshipService : IFriendshipService
     {
         var skipCount = (dto.Pagination.PageNumber - 1) * dto.Pagination.PageSize;
         var friends = await _unitOfWork.CustomerRepository
-            .GetOutcomingFriendsAsync(dto.UserId, skipCount, dto.Pagination.PageSize, token);
-        var totalCount = await _unitOfWork.CustomerRepository.TotalOutcomingFriendsCountAsync(dto.UserId, token);
+            .GetOutComingFriendsAsync(dto.UserId, skipCount, dto.Pagination.PageSize, token);
+        var totalCount = await _unitOfWork.CustomerRepository.TotalOutComingFriendsCountAsync(dto.UserId, token);
         var friendsResponse = friends.Select(user => _mapper.Map<UserFriendResponse>(user));
         var createPagination = new CreatePagedResponseDto<UserFriendResponse>
         {

@@ -123,7 +123,7 @@ public class CustomerRepository : ICustomerRepository
             .CountAsync(cancellationToken);
     }
     
-    public async Task<IEnumerable<Customer>> GetOutcomingFriendsAsync(Guid customerId, int skipCount, int takeCount, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Customer>> GetOutComingFriendsAsync(Guid customerId, int skipCount, int takeCount, CancellationToken cancellationToken = default)
     {
         return await _context.Friendships
             .Where(e => e.UserId == customerId && e.StatusId == FriendshipStatusId.Pending)
@@ -134,7 +134,7 @@ public class CustomerRepository : ICustomerRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<int> TotalOutcomingFriendsCountAsync(Guid customerId, CancellationToken cancellationToken = default)
+    public async Task<int> TotalOutComingFriendsCountAsync(Guid customerId, CancellationToken cancellationToken = default)
     {
         return await _context.Friendships
             .Where(e => e.UserId == customerId && e.StatusId == FriendshipStatusId.Pending)

@@ -21,6 +21,7 @@ public class ServiceManager : IServiceManager
     private readonly Lazy<IExpenseTypeService> _lazyExpenseTypeService;
     private readonly Lazy<IExpenseService> _lazyExpenseService;
     private readonly Lazy<IUserService> _lazyUserService;
+    private readonly Lazy<IAccountService> _lazyAccountService;
 
     public ServiceManager(IMapper mapper, IUnitOfWork unitOfWork, IPasswordHasher passwordHasher,
         AuthenticationOptions authenticationOptions)
@@ -38,6 +39,7 @@ public class ServiceManager : IServiceManager
         _lazyExpenseTypeService = new Lazy<IExpenseTypeService>(new ExpenseTypeService(unitOfWork, mapper));
         _lazyExpenseService = new Lazy<IExpenseService>(new ExpenseService(unitOfWork, mapper, PaginationService));
         _lazyUserService = new Lazy<IUserService>(new UserService(unitOfWork, mapper, PaginationService));
+        _lazyAccountService = new Lazy<IAccountService>(new AccountService(unitOfWork, mapper));
     }
 
     public ICustomerService CustomerService => _lazyCustomerService.Value;
@@ -51,4 +53,5 @@ public class ServiceManager : IServiceManager
     public IExpenseTypeService ExpenseTypeService => _lazyExpenseTypeService.Value;
     public IExpenseService ExpenseService => _lazyExpenseService.Value;
     public IUserService UserService => _lazyUserService.Value;
+    public IAccountService AccountService => _lazyAccountService.Value;
 }

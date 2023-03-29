@@ -9,6 +9,7 @@ public interface IUnitOfWork
     ICustomExpenseCategoriesRepository CustomExpenseCategoriesRepository { get; }
     IExpenseTypeRepository ExpenseTypeRepository { get; }
     IExpenseRepository ExpenseRepository { get; }
+    IAccountRepository AccountRepository { get; }
     
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
