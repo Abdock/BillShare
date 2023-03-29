@@ -2,6 +2,7 @@
 using BillShare.Requests.Accounts;
 using Contracts.DTOs.Accounts;
 using Contracts.Responses.Accounts;
+using Contracts.Responses.Expenses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Abstractions;
@@ -63,6 +64,21 @@ public class AccountsController : ControllerBase
         return Ok(responses);
     }
 
+    [HttpGet]
+    [Authorize]
+    [Route("{accountId:guid}/expenses")]
+    public async Task<ActionResult<IEnumerable<ShortExpenseResponse>>> GetAccountPaidExpenses(
+        [FromRoute] Guid accountId)
+    {
+        var dto = new GetPaidExpensesDto
+        {
+            UserId = User.GetUserId(),
+            AccountId = accountId
+        };
+        var responses = await _serviceManager.AccountService.GetPaidExpensesByAccountAsync(dto);
+        return Ok(responses);
+    }
+
     [HttpPut]
     [Authorize]
     [Route("{accountId:guid}/disable")]
@@ -76,7 +92,7 @@ public class AccountsController : ControllerBase
         await _serviceManager.AccountService.DisableAccountAsync(dto);
         return NoContent();
     }
-    
+
     [HttpPut]
     [Authorize]
     [Route("{accountId:guid}/enable")]

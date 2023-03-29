@@ -1,5 +1,6 @@
 ﻿using Contracts.DTOs.Accounts;
 using Contracts.Responses.Accounts;
+using Contracts.Responses.Expenses;
 
 namespace Services.Abstractions;
 
@@ -15,4 +16,7 @@ public interface IAccountService
     Task DisableAccountAsync(DisableAccountDto dto, CancellationToken cancellationToken = default);
     Task EnableAccountAsync(EnableAccountDto dto, CancellationToken cancellationToken = default);
     Task ChangeAccountAmountAsync(ChangeAccountAmountDto dto, CancellationToken cancellationToken = default);
+
+    Task<IEnumerable<ShortExpenseResponse>> GetPaidExpensesByAccountAsync(GetPaidExpensesDto dto,
+        CancellationToken cancellationToken = default);
 }

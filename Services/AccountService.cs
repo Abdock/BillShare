@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Contracts.DTOs.Accounts;
 using Contracts.Responses.Accounts;
+using Contracts.Responses.Expenses;
 using Domain.Models;
 using Domain.Repositories;
 using Services.Abstractions;
@@ -52,9 +53,18 @@ public class AccountService : IAccountService
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task ChangeAccountAmountAsync(ChangeAccountAmountDto dto, CancellationToken cancellationToken = default)
+    public async Task ChangeAccountAmountAsync(ChangeAccountAmountDto dto,
+        CancellationToken cancellationToken = default)
     {
         await _unitOfWork.AccountRepository.ChangeAmountAsync(dto.UserId, dto.AccountId, dto.Amount, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<ShortExpenseResponse>> GetPaidExpensesByAccountAsync(GetPaidExpensesDto dto,
+        CancellationToken cancellationToken = default)
+    {
+        var expenses = await _unitOfWork.AccountRepository
+            .GetPaidExpensesByAccountAsync(dto.UserId, dto.AccountId, cancellationToken);
+        return expenses.Select(expense => _mapper.Map<ShortExpenseResponse>(expense));
     }
 }

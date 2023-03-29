@@ -10,4 +10,7 @@ public interface IAccountRepository
     Task DisableAccountAsync(Guid userId, Guid accountId, CancellationToken cancellationToken = default);
     Task EnableAccountAsync(Guid userId, Guid accountId, CancellationToken cancellationToken = default);
     Task ChangeAmountAsync(Guid userId, Guid accountId, decimal amount, CancellationToken cancellationToken = default);
+
+    Task<IEnumerable<Expense>> GetPaidExpensesByAccountAsync(Guid userId, Guid accountId,
+        CancellationToken cancellationToken = default);
 }

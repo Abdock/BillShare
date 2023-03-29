@@ -24,7 +24,7 @@ public class AccountRepository : IAccountRepository
     public async Task<IEnumerable<Account>> GetAccountsAsync(Guid userId, CancellationToken cancellationToken = default)
     {
         return await _context.Accounts
-            .Where(e=>e.UserId==userId)
+            .Where(e => e.UserId == userId && e.StatusId == AccountStatusId.Active)
             .ToListAsync(cancellationToken);
     }
 
@@ -77,5 +77,16 @@ public class AccountRepository : IAccountRepository
 
         account.Amount = amount;
         _context.Accounts.Update(account);
+    }
+
+    public async Task<IEnumerable<Expense>> GetPaidExpensesByAccountAsync(Guid userId, Guid accountId,
+        CancellationToken cancellationToken = default)
+    {
+        return await _context.Accounts
+            .Where(e => e.Id == accountId && e.UserId == userId)
+            .Include(e => e.Expenses)
+            .SelectMany(e => e.Expenses)
+            .Where(e => e.StatusId == ExpenseStatusId.Finished)
+            .ToListAsync(cancellationToken);
     }
 }
