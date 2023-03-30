@@ -32,7 +32,7 @@ public class UsersController : ControllerBase
     [HttpGet]
     [Authorize]
     [Route("search")]
-    public async Task<ActionResult<PagedResponse<CustomerResponse>>> SearchUser([FromQuery] string username,
+    public async Task<ActionResult<PagedResponse<RelatedCustomerResponse>>> SearchUser([FromQuery] string username,
         [FromQuery] PaginationDto pagination)
     {
         var path = new Uri($"{Request.Host}{Request.Path.Value!}");
