@@ -1,0 +1,1 @@
+﻿This folder uses to save uploaded images
