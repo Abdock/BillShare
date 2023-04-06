@@ -2,6 +2,7 @@
 using Contracts.Authentication;
 using Domain.Repositories;
 using Infrastructure.Authentication.Service;
+using Microsoft.AspNetCore.Hosting;
 using Services;
 using Services.Abstractions;
 using Services.Abstractions.Authentication;
@@ -24,9 +25,10 @@ public class ServiceManager : IServiceManager
     private readonly Lazy<IAccountService> _lazyAccountService;
 
     public ServiceManager(IMapper mapper, IUnitOfWork unitOfWork, IPasswordHasher passwordHasher,
-        AuthenticationOptions authenticationOptions)
+        AuthenticationOptions authenticationOptions, IWebHostEnvironment environment)
     {
-        _lazyStorageService = new Lazy<IStorageService>(new DriveStorageService());
+        var wwwRoot = environment.WebRootPath;
+        _lazyStorageService = new Lazy<IStorageService>(new DriveStorageService(wwwRoot));
         _lazyPaginationService = new Lazy<IPaginationService>(new PaginationService());
         _lazyCustomerService = new Lazy<ICustomerService>(new CustomerService(unitOfWork, mapper, passwordHasher));
         _lazyFriendshipService = new Lazy<IFriendshipService>(new FriendshipService(unitOfWork, mapper, PaginationService));

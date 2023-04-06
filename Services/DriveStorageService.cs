@@ -5,8 +5,14 @@ namespace Services;
 
 public class DriveStorageService : IStorageService
 {
-    private const string GlobalPath = "./BillShare/Images/";
-    
+    private const string GlobalPath = "Images/";
+    private readonly string _path;
+
+    public DriveStorageService(string folderPath)
+    {
+        _path = $"{folderPath}/{GlobalPath}";
+    }
+
     public async Task<string> WriteDataAsync(StorageFile file, CancellationToken cancellationToken = default)
     {
         var data = Convert.FromBase64String(file.Data);
@@ -15,9 +21,9 @@ public class DriveStorageService : IStorageService
         return filePath;
     }
 
-    private static string GetFilePath(StorageFile file)
+    private string GetFilePath(StorageFile file)
     {
-        var info = new DirectoryInfo(GlobalPath);
+        var info = new DirectoryInfo(_path);
         if (!info.Exists)
         {
             info.Create();
