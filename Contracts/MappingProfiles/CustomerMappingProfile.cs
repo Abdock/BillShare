@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Contracts.DTOs;
+using Contracts.DTOs.Customers;
+using Contracts.DTOs.General;
 using Contracts.Responses.Customers;
 using Contracts.Responses.Friends;
 using Domain.Models;
@@ -31,5 +33,9 @@ public class CustomerMappingProfile : Profile
             {
                 expression.MapFrom(e => e.AvatarUrl);
             });
+        CreateMap<ChangeCustomerAvatarDto, StorageFile>(MemberList.Destination)
+            .ForMember(e => e.Id, expression =>
+                expression.MapFrom(e => Guid.NewGuid()));
+        CreateMap<Customer, CustomerAvatarIcon>(MemberList.Destination);
     }
 }

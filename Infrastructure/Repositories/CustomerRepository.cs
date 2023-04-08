@@ -147,4 +147,9 @@ public class CustomerRepository : ICustomerRepository
             .Where(e => e.Name.ToLower().Contains(username.ToLower()))
             .CountAsync(cancellationToken);
     }
+
+    public void Update(Customer customer)
+    {
+        _context.Customers.Update(customer);
+    }
 }

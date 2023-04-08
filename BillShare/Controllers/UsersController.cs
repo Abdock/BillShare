@@ -1,6 +1,7 @@
 ﻿using BillShare.Extensions;
 using Contracts.DTOs.Customers;
 using Contracts.DTOs.General;
+using Contracts.DTOs.Icons;
 using Contracts.Responses.Customers;
 using Contracts.Responses.General;
 using Microsoft.AspNetCore.Authorization;
@@ -45,5 +46,29 @@ public class UsersController : ControllerBase
         };
         var response = await _serviceManager.UserService.SearchCustomersWithUsername(dto);
         return Ok(response);
+    }
+
+    [HttpPost]
+    [Authorize]
+    [Route("me/avatar")]
+    public async Task<ActionResult<CustomerAvatarIcon>> ChangeAvatar([FromBody] CreateIconDto dto)
+    {
+        var serviceDto = new ChangeCustomerAvatarDto
+        {
+            CustomerId = User.GetUserId(),
+            ImageData = dto.IconImageData,
+            Extension = dto.Extension
+        };
+        var response = await _serviceManager.CustomerService.ChangeCustomerAvatarAsync(serviceDto);
+        return Ok(response);
+    }
+
+    [HttpDelete]
+    [Authorize]
+    [Route("me/avatar")]
+    public async Task<ActionResult> DeleteAvatar()
+    {
+        await _serviceManager.CustomerService.DeleteCustomerAvatarAsync(User.GetUserId());
+        return NoContent();
     }
 }

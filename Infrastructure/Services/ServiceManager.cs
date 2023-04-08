@@ -30,7 +30,7 @@ public class ServiceManager : IServiceManager
         var wwwRoot = environment.WebRootPath;
         _lazyStorageService = new Lazy<IStorageService>(new DriveStorageService(wwwRoot));
         _lazyPaginationService = new Lazy<IPaginationService>(new PaginationService());
-        _lazyCustomerService = new Lazy<ICustomerService>(new CustomerService(unitOfWork, mapper, passwordHasher));
+        _lazyCustomerService = new Lazy<ICustomerService>(new CustomerService(unitOfWork, mapper, passwordHasher, StorageService));
         _lazyFriendshipService = new Lazy<IFriendshipService>(new FriendshipService(unitOfWork, mapper, PaginationService));
         _lazyTokenGeneratorService =
             new Lazy<ITokenGeneratorService>(new TokenGeneratorService(authenticationOptions, unitOfWork, mapper));

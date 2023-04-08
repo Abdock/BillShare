@@ -31,4 +31,6 @@ public interface ICustomerRepository
     Task<int> TotalOutComingFriendsCountAsync(Guid customerId, CancellationToken cancellationToken = default);
 
     Task<int> TotalCountOfCustomersWithUsernameAsync(string username, CancellationToken cancellationToken = default);
+
+    void Update(Customer customer);
 }
