@@ -47,7 +47,9 @@ public class CustomerRepository : ICustomerRepository
             .Skip(skipCount)
             .Take(takeCount)
             .Include(e=>e.UserFriendships)
+            .ThenInclude(e=>e.Friend)
             .Include(e=>e.FriendFriendships)
+            .ThenInclude(e=>e.User)
             .ToListAsync(cancellationToken);
     }
 

@@ -11,6 +11,7 @@ public class CustomerConfiguration : IEntityTypeConfiguration<Customer>
     {
         builder.HasKey(e => e.Id);
         builder.Ignore(e => e.Friends);
+        builder.Ignore(e => e.Friendships);
         builder.Property(e => e.Name).HasMaxLength(ModelsConstants.NameMaxLength);
         builder.Property(e => e.Email).HasMaxLength(ModelsConstants.EmailMaxLength);
         builder.Property(e => e.ExternalId).HasMaxLength(ModelsConstants.ExternalIdMaxLength);
