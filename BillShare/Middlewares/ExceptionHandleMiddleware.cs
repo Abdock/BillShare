@@ -44,6 +44,10 @@ public class ExceptionHandleMiddleware
             {
                 StatusCode = StatusCodes.Status401Unauthorized, Message = exception.Message
             },
+            UserAlreadyExistsException => new ErrorResponse
+            {
+                StatusCode = StatusCodes.Status400BadRequest, Message = exception.Message
+            },
             _ => new ErrorResponse {StatusCode = StatusCodes.Status500InternalServerError, Message = "Something wrong"}
         };
 

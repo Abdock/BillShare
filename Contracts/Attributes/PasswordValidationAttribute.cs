@@ -5,7 +5,7 @@ namespace Contracts.Attributes;
 
 public class PasswordValidationAttribute : ValidationAttribute
 {
-    private readonly string passwordRegex = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$";
+    private const string PasswordRegex = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$";
 
     protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
     {
@@ -13,7 +13,7 @@ public class PasswordValidationAttribute : ValidationAttribute
         {
             var password = value.ToString()!;
 
-            if (!Regex.IsMatch(password, passwordRegex))
+            if (!Regex.IsMatch(password, PasswordRegex))
             {
                 return new ValidationResult(ErrorMessage);
             }

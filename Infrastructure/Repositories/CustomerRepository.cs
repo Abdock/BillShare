@@ -74,6 +74,18 @@ public class CustomerRepository : ICustomerRepository
 
     public async Task AddCustomerAsync(Customer customer, CancellationToken cancellationToken = default)
     {
+        var isUsernameUsed = await _context.Customers.AnyAsync(e => e.Name == customer.Name, cancellationToken);
+        if (isUsernameUsed)
+        {
+            throw new UserAlreadyExistsException("Customer username already used");
+        }
+
+        var isEmailUsed = await _context.Customers.AnyAsync(e => e.Email == customer.Email, cancellationToken);
+        if (isEmailUsed)
+        {
+            throw new UserAlreadyExistsException("Customer email already used");
+        }
+        
         var account = new Account
         {
             Amount = 0,
