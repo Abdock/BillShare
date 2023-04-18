@@ -31,4 +31,7 @@ public class Customer : BaseEntity
 
     internal ICollection<Friendship> FriendFriendships { get; init; } = new HashSet<Friendship>();
     internal ICollection<Friendship> UserFriendships { get; init; } = new HashSet<Friendship>();
+
+    public ICollection<Group> CreatedGroups { get; init; } = new HashSet<Group>();
+    public ICollection<Group> Groups { get; init; } = new HashSet<Group>();
 }

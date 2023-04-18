@@ -27,5 +27,8 @@ public class CustomerConfiguration : IEntityTypeConfiguration<Customer>
         builder.HasOne(e => e.Role)
             .WithMany()
             .HasForeignKey(e => e.RoleId);
+        builder.HasMany(e => e.CreatedGroups)
+            .WithOne(e => e.Creator)
+            .HasForeignKey(e => e.CreatorId);
     }
 }

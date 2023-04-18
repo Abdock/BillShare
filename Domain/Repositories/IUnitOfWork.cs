@@ -10,6 +10,7 @@ public interface IUnitOfWork
     IExpenseTypeRepository ExpenseTypeRepository { get; }
     IExpenseRepository ExpenseRepository { get; }
     IAccountRepository AccountRepository { get; }
+    IGroupRepository GroupRepository { get; }
     
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

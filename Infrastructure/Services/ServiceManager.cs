@@ -23,6 +23,7 @@ public class ServiceManager : IServiceManager
     private readonly Lazy<IExpenseService> _lazyExpenseService;
     private readonly Lazy<IUserService> _lazyUserService;
     private readonly Lazy<IAccountService> _lazyAccountService;
+    private readonly Lazy<IGroupService> _lazyGroupService;
 
     public ServiceManager(IMapper mapper, IUnitOfWork unitOfWork, IPasswordHasher passwordHasher,
         AuthenticationOptions authenticationOptions, IWebHostEnvironment environment)
@@ -42,6 +43,7 @@ public class ServiceManager : IServiceManager
         _lazyExpenseService = new Lazy<IExpenseService>(new ExpenseService(unitOfWork, mapper, PaginationService));
         _lazyUserService = new Lazy<IUserService>(new UserService(unitOfWork, mapper, PaginationService));
         _lazyAccountService = new Lazy<IAccountService>(new AccountService(unitOfWork, mapper));
+        _lazyGroupService = new Lazy<IGroupService>(new GroupService(unitOfWork, mapper, PaginationService));
     }
 
     public ICustomerService CustomerService => _lazyCustomerService.Value;
@@ -56,4 +58,5 @@ public class ServiceManager : IServiceManager
     public IExpenseService ExpenseService => _lazyExpenseService.Value;
     public IUserService UserService => _lazyUserService.Value;
     public IAccountService AccountService => _lazyAccountService.Value;
+    public IGroupService GroupService => _lazyGroupService.Value;
 }

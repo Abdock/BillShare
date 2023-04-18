@@ -162,6 +162,12 @@ public class CustomerRepository : ICustomerRepository
             .CountAsync(cancellationToken);
     }
 
+    public async Task<IEnumerable<Customer>> GetCustomersWithIdsAsync(IEnumerable<Guid> ids,
+        CancellationToken cancellationToken = default)
+    {
+        return await _context.Customers.Where(e => ids.Contains(e.Id)).ToListAsync(cancellationToken);
+    }
+
     public void Update(Customer customer)
     {
         _context.Customers.Update(customer);

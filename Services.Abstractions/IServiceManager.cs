@@ -16,4 +16,5 @@ public interface IServiceManager
     IExpenseService ExpenseService { get; }
     IUserService UserService { get; }
     IAccountService AccountService { get; }
+    IGroupService GroupService { get; }
 }

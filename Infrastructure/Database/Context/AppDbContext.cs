@@ -26,7 +26,8 @@ public class AppDbContext : DbContext
     public DbSet<Password> Passwords { get; set; } = default!;
     public DbSet<Role> Roles { get; set; } = default!;
     public DbSet<RefreshToken> RefreshTokens { get; set; } = default!;
-    
+    public DbSet<Group> Groups { get; set; } = default!;
+
     protected AppDbContext()
     {
     }
@@ -57,5 +58,6 @@ public class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new PasswordConfiguration());
         modelBuilder.ApplyConfiguration(new RefreshTokenConfiguration());
         modelBuilder.ApplyConfiguration(new RoleConfiguration());
+        modelBuilder.ApplyConfiguration(new GroupsConfiguration());
     }
 }
