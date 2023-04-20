@@ -28,7 +28,7 @@ public class IconRepository : IIconRepository
     public async Task<Icon> GetIconAsync(Guid iconId, CancellationToken cancellationToken = default)
     {
         var icon = await _context.Icons.FirstOrDefaultAsync(e => e.Id == iconId, cancellationToken);
-        if (icon == null)
+        if (icon is null)
         {
             throw new NotFoundException($"Icon with id {iconId} not found");
         }

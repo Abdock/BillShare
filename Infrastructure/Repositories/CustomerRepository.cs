@@ -20,7 +20,7 @@ public class CustomerRepository : ICustomerRepository
     public async Task<Customer> GetByCustomerIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var customer = await _context.Customers.AsNoTracking().FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
-        if (customer == null)
+        if (customer is null)
         {
             throw new NotFoundException($"Customer with id {id} not found");
         }
@@ -31,7 +31,7 @@ public class CustomerRepository : ICustomerRepository
     public async Task<Customer> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
         var customer = await _context.Customers.AsNoTracking().FirstOrDefaultAsync(e => e.Email == email, cancellationToken);
-        if (customer == null)
+        if (customer is null)
         {
             throw new NotFoundException($"Customer with email {email} not found");
         }
@@ -60,7 +60,7 @@ public class CustomerRepository : ICustomerRepository
             .Include(e => e.Password)
             .AsNoTracking()
             .FirstOrDefaultAsync(e => e.Name == username, cancellationToken);
-        if (customer == null)
+        if (customer is null)
         {
             throw new NotFoundException("Invalid user credentials");
         }

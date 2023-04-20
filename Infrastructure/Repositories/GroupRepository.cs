@@ -28,7 +28,7 @@ public class GroupRepository : IGroupRepository
             .Include(e => e.Creator)
             .AsNoTracking()
             .FirstOrDefaultAsync(cancellationToken);
-        if (group == null)
+        if (group is null)
         {
             throw new NotFoundException($"Group with id {groupId} not found");
         }

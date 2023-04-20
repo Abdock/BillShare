@@ -19,12 +19,12 @@ public class CustomExpenseCategoryRepository : ICustomExpenseCategoriesRepositor
         CancellationToken cancellationToken = default)
     {
         var icon = await _context.Icons.FirstOrDefaultAsync(e => e.Id == expenseCategory.IconId, cancellationToken);
-        if (icon == null)
+        if (icon is null)
         {
             throw new NotFoundException($"Icon with id {expenseCategory.IconId} not found");
         }
 
-        if (icon.ExpenseCategoryId == null)
+        if (icon.ExpenseCategoryId is not null)
         {
             throw new InvalidOperationException(
                 $"Customer {expenseCategory.CustomerId} try to reassign icon {icon.Id} to new category");
@@ -40,7 +40,7 @@ public class CustomExpenseCategoryRepository : ICustomExpenseCategoriesRepositor
         var expenseCategory = await _context.CustomExpenseCategories
             .Include(e=>e.Icon)
             .FirstOrDefaultAsync(e => e.Id == expenseCategoryId, cancellationToken);
-        if (expenseCategory == null)
+        if (expenseCategory is null)
         {
             throw new NotFoundException($"Expense category by id {expenseCategoryId} not found");
         }
@@ -63,7 +63,7 @@ public class CustomExpenseCategoryRepository : ICustomExpenseCategoriesRepositor
     {
         var expenseCategory = await _context.CustomExpenseCategories
             .FirstOrDefaultAsync(e => e.Id == expenseCategoryId && e.CustomerId == userId, cancellationToken);
-        if (expenseCategory == null)
+        if (expenseCategory is null)
         {
             throw new NotFoundException($"Expense category by id {expenseCategoryId} not found");
         }

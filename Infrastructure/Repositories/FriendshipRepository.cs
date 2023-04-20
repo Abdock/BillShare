@@ -58,7 +58,7 @@ public class FriendshipRepository : IFriendshipRepository
     public async Task<Friendship> GetFriendshipAsync(Guid id, CancellationToken token = default)
     {
         var friendship = await _context.Friendships.FirstOrDefaultAsync(e => e.Id == id, token);
-        if (friendship == null)
+        if (friendship is null)
         {
             throw new NotFoundException($"Friendship with id {id} not found");
         }
@@ -71,7 +71,7 @@ public class FriendshipRepository : IFriendshipRepository
         var friendship = await _context.Friendships
             .FirstOrDefaultAsync(e =>
                 e.FriendId == userId && e.UserId == friendId && e.StatusId == FriendshipStatusId.Pending, token);
-        if (friendship == null)
+        if (friendship is null)
         {
             throw new NotFoundException($"Friendship request by id {friendId} not found");
         }
@@ -92,7 +92,7 @@ public class FriendshipRepository : IFriendshipRepository
         var friendship = await _context.Friendships
             .FirstOrDefaultAsync(e =>
                 e.FriendId == userId && e.UserId == friendId && e.StatusId == FriendshipStatusId.Pending, token);
-        if (friendship == null)
+        if (friendship is null)
         {
             throw new NotFoundException($"Friendship request by id {friendId} not found");
         }

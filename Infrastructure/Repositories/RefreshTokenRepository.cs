@@ -27,7 +27,7 @@ public class RefreshTokenRepository : IRefreshTokenRepository
     {
         var token = await _context.RefreshTokens
             .FirstOrDefaultAsync(e => e.Token == refreshToken, cancellationToken);
-        if (token == null)
+        if (token is null)
         {
             throw new NotFoundException($"Refresh token {refreshToken} not found");
         }
@@ -41,7 +41,7 @@ public class RefreshTokenRepository : IRefreshTokenRepository
         var token = await _context.RefreshTokens.Where(e => e.Token == refreshToken)
             .Include(e => e.Owner)
             .FirstOrDefaultAsync(cancellationToken);
-        if (token == null)
+        if (token is null)
         {
             throw new NotFoundException($"Refresh token {refreshToken} not found");
         }

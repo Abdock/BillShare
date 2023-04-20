@@ -39,7 +39,7 @@ public class ExpenseRepository : IExpenseRepository
             .Include(e => e.Expense)
             .Select(e => e.Expense)
             .FirstOrDefaultAsync(cancellationToken);
-        if (expense == null)
+        if (expense is null)
         {
             throw new NotFoundException($"Expense with id {expenseId} in participant id {customerId} not found");
         }
@@ -66,7 +66,7 @@ public class ExpenseRepository : IExpenseRepository
             .Include(e => e.Expense)
             .Select(e => e.Expense)
             .FirstOrDefaultAsync(cancellationToken);
-        if (expense == null)
+        if (expense is null)
         {
             throw new NotFoundException($"Expense with id {expenseId} in participant id {customerId} not found");
         }
@@ -82,7 +82,7 @@ public class ExpenseRepository : IExpenseRepository
             .Include(e => e.Expense)
             .Select(e => e.Expense)
             .FirstOrDefaultAsync(cancellationToken);
-        if (expense == null)
+        if (expense is null)
         {
             throw new NotFoundException($"Expense with id {expenseId} in participant id {customerId} not found");
         }
@@ -127,7 +127,7 @@ public class ExpenseRepository : IExpenseRepository
     {
         var participant = await _context.ExpenseParticipants.FirstOrDefaultAsync(e => e.Id == participantId && e.ExpenseId == expenseId,
             cancellationToken);
-        if (participant == null)
+        if (participant is null)
         {
             throw new NotFoundException($"Expense participant with id {participantId} in expense {expenseId} not found");
         }
@@ -143,20 +143,20 @@ public class ExpenseRepository : IExpenseRepository
             .Include(e => e.ExpenseParticipants)
             .ThenInclude(e => e.ExpenseParticipantItems)
             .FirstOrDefaultAsync(cancellationToken);
-        if (expense == null)
+        if (expense is null)
         {
             throw new NotFoundException($"Expense with id {expenseId} not found");
         }
 
         var participant = expense.ExpenseParticipants.FirstOrDefault(e => e.CustomerId == customerId);
-        if (participant == null)
+        if (participant is null)
         {
             throw new NotFoundException($"Expense with id {expenseId} not contain customer with id {customerId}");
         }
 
         var item = participant.ExpenseParticipantItems.FirstOrDefault(e =>
             e.ItemId == expenseItemId && e.ExpenseParticipantId == customerId);
-        if (item == null)
+        if (item is null)
         {
             throw new NotFoundException($"Expense with id {expenseId} not contain item with id {expenseItemId}");
         }
@@ -173,20 +173,20 @@ public class ExpenseRepository : IExpenseRepository
             .Include(e => e.ExpenseParticipants)
             .ThenInclude(e => e.ExpenseParticipantItems)
             .FirstOrDefaultAsync(cancellationToken);
-        if (expense == null)
+        if (expense is null)
         {
             throw new NotFoundException($"Expense with id {expenseId} not found");
         }
 
         var participant = expense.ExpenseParticipants.FirstOrDefault(e => e.CustomerId == customerId);
-        if (participant == null)
+        if (participant is null)
         {
             throw new NotFoundException($"Expense with id {expenseId} not contain customer with id {customerId}");
         }
 
         var item = participant.ExpenseParticipantItems.FirstOrDefault(e =>
             e.ItemId == expenseItemId && e.ExpenseParticipantId == customerId);
-        if (item == null)
+        if (item is null)
         {
             throw new NotFoundException($"Expense with id {expenseId} not contain item with id {expenseItemId}");
         }
@@ -203,7 +203,7 @@ public class ExpenseRepository : IExpenseRepository
                 .Include(e=>e.ExpenseParticipants)
                 .Include(e=>e.ExpenseItems)
                 .FirstOrDefaultAsync(cancellationToken);
-        if (expense == null)
+        if (expense is null)
         {
             throw new NotFoundException($"Expense with id {expenseId} not found");
         }
@@ -216,7 +216,7 @@ public class ExpenseRepository : IExpenseRepository
         }
 
         var item = expense.ExpenseItems.FirstOrDefault(e => e.Id == expenseItemId);
-        if (item != null)
+        if (item is not null)
         {
             expense.ExpenseItems.Remove(item);
             // TODO write algorithm to remove participant items
@@ -227,7 +227,7 @@ public class ExpenseRepository : IExpenseRepository
         CancellationToken cancellationToken = default)
     {
         var expense = await _context.Expenses.FirstOrDefaultAsync(e => e.Id == expenseId, cancellationToken);
-        if (expense == null)
+        if (expense is null)
         {
             throw new NotFoundException($"Expense with id {expenseId} not found");
         }

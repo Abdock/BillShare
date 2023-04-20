@@ -32,7 +32,7 @@ public class AccountRepository : IAccountRepository
     {
         var account = await _context.Accounts
             .FirstOrDefaultAsync(e => e.Id == accountId && e.UserId == userId, cancellationToken);
-        if (account == null)
+        if (account is null)
         {
             throw new NotFoundException($"Account with id {accountId} in user {userId}");
         }
@@ -44,7 +44,7 @@ public class AccountRepository : IAccountRepository
     {
         var account = await _context.Accounts
             .FirstOrDefaultAsync(e => e.Id == accountId && e.UserId == userId, cancellationToken);
-        if (account == null)
+        if (account is null)
         {
             throw new NotFoundException($"Account with id {accountId} in user {userId}");
         }
@@ -57,7 +57,7 @@ public class AccountRepository : IAccountRepository
     {
         var account = await _context.Accounts
             .FirstOrDefaultAsync(e => e.Id == accountId && e.UserId == userId, cancellationToken);
-        if (account == null)
+        if (account is null)
         {
             throw new NotFoundException($"Account with id {accountId} in user {userId}");
         }
@@ -70,7 +70,7 @@ public class AccountRepository : IAccountRepository
     {
         var account = await _context.Accounts
             .FirstOrDefaultAsync(e => e.Id == accountId && e.UserId == userId, cancellationToken);
-        if (account == null)
+        if (account is null)
         {
             throw new NotFoundException($"Account with id {accountId} in user {userId}");
         }
