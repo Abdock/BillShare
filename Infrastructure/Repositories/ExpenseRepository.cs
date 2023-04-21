@@ -16,6 +16,19 @@ public class ExpenseRepository : IExpenseRepository
         _context = context;
     }
 
+    public async Task LoadRelatedDataAsync(Expense expense, CancellationToken cancellationToken = default)
+    {
+        foreach (var reference in _context.Entry(expense).References)
+        {
+            await reference.LoadAsync(cancellationToken);
+        }
+
+        foreach (var collection in _context.Entry(expense).Collections)
+        {
+            await collection.LoadAsync(cancellationToken);
+        }
+    }
+
     public async Task AddExpenseAsync(Expense expense, CancellationToken cancellationToken = default)
     {
         var participants = expense.ExpenseParticipants;

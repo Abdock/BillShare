@@ -22,6 +22,10 @@ public class ExpenseMappingProfile : Profile
                 expression.MapFrom(e => e.DateTime.ToString(FormatConstants.DateTimeFormat)));
         CreateMap<CreateExpenseDto, Expense>(MemberList.Source)
             .ForMember(e => e.Amount, expression =>
-                expression.MapFrom(e => (decimal) e.Amount));
+                expression.MapFrom(e => (decimal) e.Amount))
+            .ForMember(e=>e.DateTime, expression => expression.MapFrom(_=>DateTime.UtcNow))
+            .ForMember(e=>e.ExpenseParticipants, expression => expression.Ignore())
+            .ForMember(e=>e.ExpenseMultipliers, expression => expression.Ignore())
+            .ForMember(e=>e.ExpenseItems, expression => expression.Ignore());
     }
 }

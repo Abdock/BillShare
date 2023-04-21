@@ -30,8 +30,40 @@ public class ExpenseService : IExpenseService
         CancellationToken cancellationToken = default)
     {
         var expense = _mapper.Map<Expense>(dto);
+        foreach (var participant in dto.ExpenseParticipants)
+        {
+            expense.ExpenseParticipants.Add(new ExpenseParticipant
+            {
+                CustomerId = participant.UserId,
+                ExpenseId = expense.Id
+            });
+        }
+
+        foreach (var multiplier in dto.ExpenseMultipliers)
+        {
+            expense.ExpenseMultipliers.Add(new ExpenseMultiplier
+            {
+                ExpenseId = expense.Id,
+                Multiplier = multiplier.Multiplier,
+                Name = multiplier.Name
+            });
+        }
+
+        foreach (var item in dto.ExpenseItems)
+        {
+            expense.ExpenseItems.Add(new ExpenseItem
+            {
+                StatusId = ExpenseItemStatusId.Active,
+                Amount = item.Amount,
+                Name = item.Name,
+                Count = item.Count,
+                ExpenseId = expense.Id
+            });
+        }
+
         await _unitOfWork.ExpenseRepository.AddExpenseAsync(expense, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.ExpenseRepository.LoadRelatedDataAsync(expense, cancellationToken);
         var response = _mapper.Map<ExpenseResponse>(expense);
         foreach (var participant in response.Participants)
         {

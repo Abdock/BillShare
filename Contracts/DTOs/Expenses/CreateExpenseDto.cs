@@ -12,8 +12,14 @@ public record CreateExpenseDto
     public required Guid CategoryId { get; init; }
     public required Guid AccountId { get; init; }
     public required int Amount { get; init; }
-    public ICollection<AddExpenseParticipantDto> ExpenseParticipants { get; init; } = new List<AddExpenseParticipantDto>();
+
+    public ICollection<AddNewExpenseParticipantDto> ExpenseParticipants { get; init; } =
+        new List<AddNewExpenseParticipantDto>();
+
     public ICollection<CreateExpenseItemDto> ExpenseItems { get; init; } = new List<CreateExpenseItemDto>();
-    public ICollection<CreateExpenseMultiplierDto> ExpenseMultipliers = new List<CreateExpenseMultiplierDto>();
+
+    public ICollection<CreateExpenseMultiplierDto> ExpenseMultipliers { get; init; } =
+        new List<CreateExpenseMultiplierDto>();
+
     public required Uri RemoveParticipantUrl { get; init; }
 }

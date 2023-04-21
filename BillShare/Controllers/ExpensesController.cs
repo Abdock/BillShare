@@ -3,6 +3,7 @@ using BillShare.Requests.ExpenseItems;
 using BillShare.Requests.ExpenseParticipants;
 using BillShare.Requests.Expenses;
 using Contracts.DTOs.ExpenseItems;
+using Contracts.DTOs.ExpenseMultipliers;
 using Contracts.DTOs.ExpenseParticipants;
 using Contracts.DTOs.Expenses;
 using Contracts.DTOs.General;
@@ -54,7 +55,22 @@ public class ExpensesController : ControllerBase
             CategoryId = request.CategoryId,
             AccountId = request.AccountId,
             Amount = request.Amount,
-            RemoveParticipantUrl = new Uri(path)
+            RemoveParticipantUrl = new Uri(path),
+            ExpenseItems = request.Items.Select(item=>new CreateExpenseItemDto
+            {
+                Name = item.Name,
+                Count = item.Count,
+                Amount = (int) item.Amount
+            }).ToList(),
+            ExpenseMultipliers = request.Multipliers.Select(multiplier => new CreateExpenseMultiplierDto
+            {
+                Name = multiplier.Name,
+                Multiplier = multiplier.CostMultiplierPercent * 0.01m
+            }).ToList(),
+            ExpenseParticipants = request.Participants.Select(participant=>new AddNewExpenseParticipantDto
+            {
+                UserId = participant.UserId
+            }).ToList()
         };
         var expense = await _serviceManager.ExpenseService.CreateExpenseAsync(dto);
         return CreatedAtAction("GetExpenseById", new

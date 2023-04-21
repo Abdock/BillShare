@@ -4,6 +4,7 @@ namespace Domain.Repositories;
 
 public interface IExpenseRepository
 {
+    Task LoadRelatedDataAsync(Expense expense, CancellationToken cancellationToken = default);
     Task AddExpenseAsync(Expense expense, CancellationToken cancellationToken = default);
     Task<Expense> GetExpenseByIdAsync(Guid expenseId, Guid customerId, CancellationToken cancellationToken = default);
 
