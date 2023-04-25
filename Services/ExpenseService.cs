@@ -82,6 +82,7 @@ public class ExpenseService : IExpenseService
     {
         var expense = await _unitOfWork.ExpenseRepository
             .GetExpenseByIdAsync(dto.ExpenseId, dto.CustomerId, cancellationToken);
+        await _unitOfWork.ExpenseRepository.LoadRelatedDataAsync(expense, cancellationToken);
         var response = _mapper.Map<ExpenseResponse>(expense);
         if (dto.CustomerId == response.CreatorId)
         {
