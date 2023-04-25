@@ -71,4 +71,12 @@ public class UsersController : ControllerBase
         await _serviceManager.CustomerService.DeleteCustomerAvatarAsync(User.GetUserId());
         return NoContent();
     }
+
+    [HttpGet]
+    [Route("{userId:guid}")]
+    public async Task<ActionResult<CustomerResponse>> GetCustomerById([FromRoute] Guid userId)
+    {
+        var customer = await _serviceManager.CustomerService.GetCustomerByIdAsync(userId);
+        return Ok(customer);
+    }
 }

@@ -7,6 +7,7 @@ namespace Contracts.DTOs.Expenses;
 
 public record CreateExpenseDto
 {
+    public required string Name { get; init; }
     public required Guid CreatorId { get; init; }
     public required ExpenseTypeId ExpenseTypeId { get; init; }
     public required Guid CategoryId { get; init; }

@@ -56,21 +56,25 @@ public class ExpensesController : ControllerBase
             AccountId = request.AccountId,
             Amount = request.Amount,
             RemoveParticipantUrl = new Uri(path),
-            ExpenseItems = request.Items.Select(item=>new CreateExpenseItemDto
-            {
-                Name = item.Name,
-                Count = item.Count,
-                Amount = (int) item.Amount
-            }).ToList(),
+            ExpenseItems = request.Items.Select(item => new CreateExpenseItemDto
+                {
+                    Name = item.Name,
+                    Count = item.Count,
+                    Amount = (int) item.Amount
+                })
+                .ToList(),
             ExpenseMultipliers = request.Multipliers.Select(multiplier => new CreateExpenseMultiplierDto
-            {
-                Name = multiplier.Name,
-                Multiplier = multiplier.CostMultiplierPercent * 0.01m
-            }).ToList(),
-            ExpenseParticipants = request.Participants.Select(participant=>new AddNewExpenseParticipantDto
-            {
-                UserId = participant.UserId
-            }).ToList()
+                {
+                    Name = multiplier.Name,
+                    Multiplier = multiplier.CostMultiplierPercent * 0.01m
+                })
+                .ToList(),
+            ExpenseParticipants = request.Participants.Select(participant => new AddNewExpenseParticipantDto
+                {
+                    UserId = participant.UserId
+                })
+                .ToList(),
+            Name = request.Name
         };
         var expense = await _serviceManager.ExpenseService.CreateExpenseAsync(dto);
         return CreatedAtAction("GetExpenseById", new

@@ -7,6 +7,7 @@ public class Expense : BaseEntity
 {
     public Guid CreatorId { get; init; }
     public Customer Creator { get; init; } = default!;
+    public string Name { get; init; } = default!;
     public ExpenseTypeId ExpenseTypeId { get; init; }
     public ExpenseType ExpenseType { get; init; } = default!;
     public Guid CategoryId { get; init; }

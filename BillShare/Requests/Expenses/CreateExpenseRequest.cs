@@ -7,6 +7,7 @@ namespace BillShare.Requests.Expenses;
 
 public record CreateExpenseRequest
 {
+    public required string Name { get; init; }
     public required ExpenseTypeId ExpenseTypeId { get; init; }
     public required Guid CategoryId { get; init; }
     public required Guid AccountId { get; init; }

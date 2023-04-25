@@ -11,6 +11,7 @@ public class ExpenseConfiguration : IEntityTypeConfiguration<Expense>
     {
         builder.HasKey(e => e.Id);
         builder.Property(e => e.Amount).HasPrecision(ModelsConstants.AmountPrecision, ModelsConstants.AmountScale);
+        builder.Property(e => e.Name).HasMaxLength(ModelsConstants.NameMaxLength);
         builder.HasOne(e => e.Account)
             .WithMany(e => e.Expenses)
             .HasForeignKey(e => e.AccountId);
