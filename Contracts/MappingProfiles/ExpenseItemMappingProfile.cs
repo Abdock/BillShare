@@ -13,7 +13,7 @@ public class ExpenseItemMappingProfile : Profile
         CreateMap<ExpenseItem, ExpenseItemResponse>(MemberList.Destination)
             .ForMember(e => e.SelectedByParticipants, expression =>
                 expression.MapFrom(e =>
-                    e.ExpenseParticipantItems.Select(p => p.ExpenseParticipantId)))
+                    e.ExpenseParticipantItems.Where(e => e.StatusId == ExpenseParticipantItemStatusId.Selected).Select(p => p.ExpenseParticipantId)))
             .ForMember(e => e.Actions, expression => expression.Ignore());
         CreateMap<CreateExpenseItemDto, ExpenseItem>(MemberList.Source)
             .ForMember(e => e.StatusId, expression =>

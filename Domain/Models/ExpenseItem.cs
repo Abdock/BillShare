@@ -13,6 +13,6 @@ public class ExpenseItem : BaseEntity
     public ExpenseItemStatusId StatusId { get; init; }
     public ExpenseItemStatus Status { get; init; } = default!;
 
-    public ICollection<ExpenseParticipantItem> ExpenseParticipantItems { get; init; } =
+    public virtual ICollection<ExpenseParticipantItem> ExpenseParticipantItems { get; init; } =
         new HashSet<ExpenseParticipantItem>();
 }
