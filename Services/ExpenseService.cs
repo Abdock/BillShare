@@ -174,7 +174,7 @@ public class ExpenseService : IExpenseService
     public async Task UnselectItemInExpenseAsync(UnselectExpenseItemDto dto,
         CancellationToken cancellationToken = default)
     {
-        await _unitOfWork.ExpenseRepository.SelectItemAsync(dto.ExpenseId, dto.ExpenseItemId, dto.CustomerId,
+        await _unitOfWork.ExpenseRepository.UnselectItemAsync(dto.ExpenseId, dto.ExpenseItemId, dto.CustomerId,
             cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }

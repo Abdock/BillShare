@@ -33,11 +33,12 @@ public class ExpensesController : ControllerBase
     [Route("{expenseId:guid}")]
     public async Task<ActionResult<ExpenseResponse>> GetExpenseById([FromRoute] Guid expenseId)
     {
+        var path = $"{Request.Host}{Request.Path}";
         var dto = new GetExpenseByIdDto
         {
             ExpenseId = expenseId,
             CustomerId = User.GetUserId(),
-            RemoveParticipantUrl = new Uri("")
+            RemoveParticipantUrl = new Uri(path)
         };
         var expense = await _serviceManager.ExpenseService.GetExpenseByIdAsync(dto);
         return Ok(expense);

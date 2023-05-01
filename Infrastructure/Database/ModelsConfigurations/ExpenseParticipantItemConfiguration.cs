@@ -10,10 +10,10 @@ public class ExpenseParticipantItemConfiguration : IEntityTypeConfiguration<Expe
     {
         builder.HasKey(e => e.Id);
         builder.HasOne(e => e.Item)
-            .WithMany()
+            .WithMany(e => e.ExpenseParticipantItems)
             .HasForeignKey(e => e.ItemId);
         builder.HasOne(e => e.Participant)
-            .WithMany()
+            .WithMany(e => e.ExpenseParticipantItems)
             .HasForeignKey(e => e.ExpenseParticipantId)
             .OnDelete(DeleteBehavior.NoAction);
         builder.HasOne(e => e.Status)
