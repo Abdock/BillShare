@@ -183,22 +183,23 @@ public class CustomerRepository : ICustomerRepository
     public async Task<IReadOnlyCollection<Spending>> GetSpendsForPeriodAsync(Guid customerId, DateTime start,
         DateTime end, CancellationToken cancellationToken = default)
     {
-        var expenses = await _context.ExpenseParticipants
+        var expenseItems = await _context.ExpenseParticipants
             .Where(e => e.CustomerId == customerId)
             .Include(e => e.ExpenseParticipantItems)
             .SelectMany(e => e.ExpenseParticipantItems)
             .Include(e => e.Participant)
             .Where(e => e.Participant.CustomerId == customerId)
             .Include(e => e.Participant)
-            .ThenInclude(e=>e.Expense)
+            .ThenInclude(e => e.Expense)
             .ThenInclude(e => e.ExpenseMultipliers)
-            .Include(e=>e.Participant)
-            .ThenInclude(e=>e.Expense)
-            .ThenInclude(e=>e.Category)
+            .Include(e => e.Participant)
+            .ThenInclude(e => e.Expense)
+            .ThenInclude(e => e.Category)
             .Include(e => e.Item)
+            .Where(e => start <= e.Item.Expense.DateTime && e.Item.Expense.DateTime <= end)
             .Select(e => e.Item)
             .ToListAsync(cancellationToken);
-        var spends = expenses.GroupBy(e => e.Expense.Category, item => item, (category, items) =>
+        var spends = expenseItems.GroupBy(e => e.Expense.Category, item => item, (category, items) =>
         {
             var itemsList = items.ToList();
             return new Spending
@@ -211,7 +212,51 @@ public class CustomerRepository : ICustomerRepository
                         .Expense
                         .ExpenseMultipliers
                         .Sum(e => e.Multiplier > 1 ? e.Multiplier / 100m : e.Multiplier))),
-                ExpensesCount = itemsList.DistinctBy(item=>item.ExpenseId).Count()
+                ExpensesCount = itemsList.DistinctBy(item => item.ExpenseId).Count()
+            };
+        }).ToList();
+        return spends;
+    }
+
+    public async Task<IReadOnlyCollection<Spending>> GetSpendsSharedBetweenUsersAsync(Guid customerId1,
+        Guid customerId2,
+        CancellationToken cancellationToken = default)
+    {
+        var firstCustomerExpenses = _context.ExpenseParticipants
+            .Where(e => e.CustomerId == customerId1)
+            .Include(e => e.Expense)
+            .Select(e => e.Expense);
+        var secondCustomerExpenses = _context.ExpenseParticipants
+            .Where(e => e.CustomerId == customerId2)
+            .Include(e => e.Expense)
+            .Select(e => e.Expense);
+        var expenseItems = await firstCustomerExpenses.Intersect(secondCustomerExpenses)
+            .Include(e => e.ExpenseItems)
+            .ThenInclude(e => e.ExpenseParticipantItems)
+            .SelectMany(e => e.ExpenseItems)
+            .SelectMany(e => e.ExpenseParticipantItems)
+            .Where(e => e.ExpenseParticipantId == customerId1 || e.ExpenseParticipantId == customerId2)
+            .Include(e => e.Item)
+            .Select(e => e.Item)
+            .Include(e => e.Expense)
+            .ThenInclude(e => e.ExpenseMultipliers)
+            .Include(e => e.Expense)
+            .ThenInclude(e => e.Category)
+            .ToListAsync(cancellationToken);
+        var spends = expenseItems.GroupBy(e => e.Expense.Category, item => item, (category, items) =>
+        {
+            var itemsList = items.ToList();
+            return new Spending
+            {
+                CategoryId = category.Id,
+                CategoryName = category.Name,
+                TotalSpend = itemsList.Sum(item =>
+                    item.Amount *
+                    (1 + item
+                        .Expense
+                        .ExpenseMultipliers
+                        .Sum(e => e.Multiplier > 1 ? e.Multiplier / 100m : e.Multiplier))),
+                ExpensesCount = itemsList.DistinctBy(item => item.ExpenseId).Count()
             };
         }).ToList();
         return spends;

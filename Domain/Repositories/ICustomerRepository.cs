@@ -40,4 +40,7 @@ public interface ICustomerRepository
 
     Task<IReadOnlyCollection<Spending>> GetSpendsForPeriodAsync(Guid customerId, DateTime start, DateTime end,
         CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyCollection<Spending>> GetSpendsSharedBetweenUsersAsync(Guid customerId1, Guid customerId2,
+        CancellationToken cancellationToken = default);
 }

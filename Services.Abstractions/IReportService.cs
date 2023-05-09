@@ -4,6 +4,9 @@ namespace Services.Abstractions;
 
 public interface IReportService
 {
-    Task<Report> ReportForPeriod(Guid customerId, DateTime start, DateTime end,
+    Task<Report> ReportForPeriodAsync(Guid customerId, DateTime start, DateTime end,
+        CancellationToken cancellationToken = default);
+
+    Task<Report> ReportSharedWithUserAsync(Guid requestSenderId, Guid userId,
         CancellationToken cancellationToken = default);
 }
