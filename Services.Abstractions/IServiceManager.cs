@@ -17,4 +17,5 @@ public interface IServiceManager
     IUserService UserService { get; }
     IAccountService AccountService { get; }
     IGroupService GroupService { get; }
+    IReportService ReportService { get; }
 }

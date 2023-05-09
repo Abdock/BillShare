@@ -1,4 +1,5 @@
 ﻿using Domain.Models;
+using Domain.ValueObjects;
 
 namespace Domain.Repositories;
 
@@ -36,4 +37,7 @@ public interface ICustomerRepository
         CancellationToken cancellationToken = default);
 
     void Update(Customer customer);
+
+    Task<IReadOnlyCollection<Spending>> GetSpendsForPeriodAsync(Guid customerId, DateTime start, DateTime end,
+        CancellationToken cancellationToken = default);
 }

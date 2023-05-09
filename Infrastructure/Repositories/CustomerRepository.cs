@@ -2,6 +2,7 @@
 using Domain.Exceptions;
 using Domain.Models;
 using Domain.Repositories;
+using Domain.ValueObjects;
 using Infrastructure.Database.Context;
 using Microsoft.EntityFrameworkCore;
 using Services.Extensions;
@@ -24,13 +25,14 @@ public class CustomerRepository : ICustomerRepository
         {
             throw new NotFoundException($"Customer with id {id} not found");
         }
-        
+
         return customer;
     }
 
     public async Task<Customer> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
-        var customer = await _context.Customers.AsNoTracking().FirstOrDefaultAsync(e => e.Email == email, cancellationToken);
+        var customer = await _context.Customers.AsNoTracking()
+            .FirstOrDefaultAsync(e => e.Email == email, cancellationToken);
         if (customer is null)
         {
             throw new NotFoundException($"Customer with email {email} not found");
@@ -46,10 +48,10 @@ public class CustomerRepository : ICustomerRepository
             .Where(e => e.Name.ToLower().Contains(username.ToLower()))
             .Skip(skipCount)
             .Take(takeCount)
-            .Include(e=>e.UserFriendships)
-            .ThenInclude(e=>e.Friend)
-            .Include(e=>e.FriendFriendships)
-            .ThenInclude(e=>e.User)
+            .Include(e => e.UserFriendships)
+            .ThenInclude(e => e.Friend)
+            .Include(e => e.FriendFriendships)
+            .ThenInclude(e => e.User)
             .ToListAsync(cancellationToken);
     }
 
@@ -87,7 +89,7 @@ public class CustomerRepository : ICustomerRepository
         {
             throw new UserAlreadyExistsException("Customer email already used");
         }
-        
+
         var account = new Account
         {
             Amount = 0,
@@ -119,7 +121,8 @@ public class CustomerRepository : ICustomerRepository
             .CountAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<Customer>> GetIncomingFriendsAsync(Guid customerId, int skipCount, int takeCount, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Customer>> GetIncomingFriendsAsync(Guid customerId, int skipCount, int takeCount,
+        CancellationToken cancellationToken = default)
     {
         return await _context.Friendships
             .Where(e => e.FriendId == customerId && e.StatusId == FriendshipStatusId.Pending)
@@ -130,14 +133,16 @@ public class CustomerRepository : ICustomerRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<int> TotalIncomingFriendsCountAsync(Guid customerId, CancellationToken cancellationToken = default)
+    public async Task<int> TotalIncomingFriendsCountAsync(Guid customerId,
+        CancellationToken cancellationToken = default)
     {
         return await _context.Friendships
             .Where(e => e.FriendId == customerId && e.StatusId == FriendshipStatusId.Pending)
             .CountAsync(cancellationToken);
     }
-    
-    public async Task<IEnumerable<Customer>> GetOutComingFriendsAsync(Guid customerId, int skipCount, int takeCount, CancellationToken cancellationToken = default)
+
+    public async Task<IEnumerable<Customer>> GetOutComingFriendsAsync(Guid customerId, int skipCount, int takeCount,
+        CancellationToken cancellationToken = default)
     {
         return await _context.Friendships
             .Where(e => e.UserId == customerId && e.StatusId == FriendshipStatusId.Pending)
@@ -148,14 +153,16 @@ public class CustomerRepository : ICustomerRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<int> TotalOutComingFriendsCountAsync(Guid customerId, CancellationToken cancellationToken = default)
+    public async Task<int> TotalOutComingFriendsCountAsync(Guid customerId,
+        CancellationToken cancellationToken = default)
     {
         return await _context.Friendships
             .Where(e => e.UserId == customerId && e.StatusId == FriendshipStatusId.Pending)
             .CountAsync(cancellationToken);
     }
 
-    public async Task<int> TotalCountOfCustomersWithUsernameAsync(string username, CancellationToken cancellationToken = default)
+    public async Task<int> TotalCountOfCustomersWithUsernameAsync(string username,
+        CancellationToken cancellationToken = default)
     {
         return await _context.Customers
             .Where(e => e.Name.ToLower().Contains(username.ToLower()))
@@ -171,5 +178,42 @@ public class CustomerRepository : ICustomerRepository
     public void Update(Customer customer)
     {
         _context.Customers.Update(customer);
+    }
+
+    public async Task<IReadOnlyCollection<Spending>> GetSpendsForPeriodAsync(Guid customerId, DateTime start,
+        DateTime end, CancellationToken cancellationToken = default)
+    {
+        var expenses = await _context.ExpenseParticipants
+            .Where(e => e.CustomerId == customerId)
+            .Include(e => e.ExpenseParticipantItems)
+            .SelectMany(e => e.ExpenseParticipantItems)
+            .Include(e => e.Participant)
+            .Where(e => e.Participant.CustomerId == customerId)
+            .Include(e => e.Participant)
+            .ThenInclude(e=>e.Expense)
+            .ThenInclude(e => e.ExpenseMultipliers)
+            .Include(e=>e.Participant)
+            .ThenInclude(e=>e.Expense)
+            .ThenInclude(e=>e.Category)
+            .Include(e => e.Item)
+            .Select(e => e.Item)
+            .ToListAsync(cancellationToken);
+        var spends = expenses.GroupBy(e => e.Expense.Category, item => item, (category, items) =>
+        {
+            var itemsList = items.ToList();
+            return new Spending
+            {
+                CategoryId = category.Id,
+                CategoryName = category.Name,
+                TotalSpend = itemsList.Sum(item =>
+                    item.Amount *
+                    (1 + item
+                        .Expense
+                        .ExpenseMultipliers
+                        .Sum(e => e.Multiplier > 1 ? e.Multiplier / 100m : e.Multiplier))),
+                ExpensesCount = itemsList.DistinctBy(item=>item.ExpenseId).Count()
+            };
+        }).ToList();
+        return spends;
     }
 }
