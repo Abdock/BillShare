@@ -20,7 +20,7 @@ if (true || true)
     
 }
 app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwaggerUI(); 
 
 
 app.UseHttpsRedirection();
