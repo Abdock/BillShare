@@ -14,7 +14,7 @@ builder.Services.ConfigureSwagger();
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
-var app = builder.Build(); 
+var app = builder.Build();  
 
 app.UseSwagger();
 app.UseSwaggerUI();
