@@ -12,15 +12,13 @@ builder.Services.ConfigureCors();
 builder.Services.ConfigureAuthenticationAndAuthorization(builder.Configuration);
 builder.Services.ConfigureSwagger();
 builder.Logging.ClearProviders();
-builder.Logging.AddConsole(); 
+builder.Logging.AddConsole();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
