@@ -15,7 +15,7 @@ builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
 var app = builder.Build();
-if (true || true)
+if (false || false)
 {
     
 }
