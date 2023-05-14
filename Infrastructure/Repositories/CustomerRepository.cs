@@ -184,19 +184,19 @@ public class CustomerRepository : ICustomerRepository
         DateTime end, CancellationToken cancellationToken = default)
     {
         var expenseItems = await _context.ExpenseParticipants
-            .Where(e => e.CustomerId == customerId)
+            .Include(e => e.Expense)
+            .Where(e =>
+                start <= e.Expense.DateTime && e.Expense.DateTime <= end)
             .Include(e => e.ExpenseParticipantItems)
-            .SelectMany(e => e.ExpenseParticipantItems)
-            .Include(e => e.Participant)
-            .Where(e => e.Participant.CustomerId == customerId)
-            .Include(e => e.Participant)
-            .ThenInclude(e => e.Expense)
-            .ThenInclude(e => e.ExpenseMultipliers)
-            .Include(e => e.Participant)
+            .ThenInclude(e => e.Item)
             .ThenInclude(e => e.Expense)
             .ThenInclude(e => e.Category)
-            .Include(e => e.Item)
-            .Where(e => start <= e.Item.Expense.DateTime && e.Item.Expense.DateTime <= end)
+            .Include(e => e.ExpenseParticipantItems)
+            .ThenInclude(e => e.Item)
+            .ThenInclude(e => e.Expense)
+            .ThenInclude(e => e.ExpenseMultipliers)
+            .Where(e => e.CustomerId == customerId)
+            .SelectMany(e => e.ExpenseParticipantItems)
             .Select(e => e.Item)
             .ToListAsync(cancellationToken);
         var spends = expenseItems.GroupBy(e => e.Expense.Category, item => item, (category, items) =>

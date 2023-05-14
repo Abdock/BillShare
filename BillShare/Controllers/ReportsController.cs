@@ -22,8 +22,8 @@ public class ReportsController : ControllerBase
     public async Task<ActionResult<Report>> GetReportsForPeriod([FromQuery] ReportForPeriodRequest request)
     {
         var cancellationToken = HttpContext.RequestAborted;
-        var startDate = DateOnly.Parse(request.StartDate).ToDateTime(TimeOnly.FromTimeSpan(TimeSpan.Zero));
-        var endDate = DateOnly.Parse(request.EndDate).ToDateTime(TimeOnly.FromTimeSpan(TimeSpan.FromSeconds(60 * 60 * 24)));
+        var startDate = DateOnly.Parse(request.StartDate).ToDateTime(TimeOnly.FromTimeSpan(TimeSpan.Zero), DateTimeKind.Utc);
+        var endDate = DateOnly.Parse(request.EndDate).ToDateTime(TimeOnly.MaxValue, DateTimeKind.Utc);
         var userId = User.GetUserId();
         var report = await _serviceManager.ReportService.ReportForPeriodAsync(userId, startDate, endDate, cancellationToken);
         return Ok(report);

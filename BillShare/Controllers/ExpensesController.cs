@@ -33,7 +33,7 @@ public class ExpensesController : ControllerBase
     [Route("{expenseId:guid}")]
     public async Task<ActionResult<ExpenseResponse>> GetExpenseById([FromRoute] Guid expenseId)
     {
-        var path = $"{Request.Host}{Request.Path}";
+        var path = $"{Request.Scheme}://{Request.Host}{Request.Path}";
         var dto = new GetExpenseByIdDto
         {
             ExpenseId = expenseId,
@@ -48,7 +48,7 @@ public class ExpensesController : ControllerBase
     [Authorize]
     public async Task<ActionResult<ExpenseResponse>> CreateExpense([FromBody] CreateExpenseRequest request)
     {
-        var path = $"{Request.Host}{Request.Path}";
+        var path = $"{Request.Scheme}://{Request.Host}{Request.Path}";
         var dto = new CreateExpenseDto
         {
             CreatorId = User.GetUserId(),
@@ -88,7 +88,8 @@ public class ExpensesController : ControllerBase
     [Authorize]
     public async Task<ActionResult<PagedResponse<ExpenseResponse>>> GetExpenses([FromQuery] PaginationDto pagination)
     {
-        var path = $"{Request.Host}{Request.Path}";
+        var path = $"{Request.Scheme}://{Request.Host}{Request.Path}";
+        Console.WriteLine(path);
         var dto = new GetUserExpensesDto
         {
             UserId = User.GetUserId(),

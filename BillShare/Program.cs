@@ -2,6 +2,8 @@ using BillShare.Constants;
 using BillShare.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
+// builder.WebHost.UseUrls("http://192.168.65.178:5135", "http://localhost:5135");
+// builder.WebHost.UseIISIntegration();
 builder.Services.ConfigureDbContext(builder.Configuration);
 builder.Services.ConfigureCustomServices();
 builder.Services.ConfigureControllers();
@@ -13,6 +15,7 @@ builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
 var app = builder.Build();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
