@@ -193,10 +193,17 @@ public class CustomerRepository : ICustomerRepository
             .ThenInclude(e => e.Category)
             .Include(e => e.ExpenseParticipantItems)
             .ThenInclude(e => e.Item)
+            .ThenInclude(e => e.Status)
+            .Include(e => e.ExpenseParticipantItems)
+            .ThenInclude(e => e.Item)
+            .ThenInclude(e => e.ExpenseParticipantItems)
+            .Include(e => e.ExpenseParticipantItems)
+            .ThenInclude(e => e.Item)
             .ThenInclude(e => e.Expense)
             .ThenInclude(e => e.ExpenseMultipliers)
             .Where(e => e.CustomerId == customerId)
             .SelectMany(e => e.ExpenseParticipantItems)
+            .Where(e => e.StatusId == ExpenseParticipantItemStatusId.Selected)
             .Select(e => e.Item)
             .ToListAsync(cancellationToken);
         var spends = expenseItems.GroupBy(e => e.Expense.Category, item => item, (category, items) =>
@@ -207,11 +214,15 @@ public class CustomerRepository : ICustomerRepository
                 CategoryId = category.Id,
                 CategoryName = category.Name,
                 TotalSpend = itemsList.Sum(item =>
-                    item.Amount *
-                    (1 + item
+                {
+                    var count = item.ExpenseParticipantItems.Count(e => e.StatusId == ExpenseParticipantItemStatusId.Selected);
+                    var multipliers = item
                         .Expense
                         .ExpenseMultipliers
-                        .Sum(e => e.Multiplier > 1 ? e.Multiplier / 100m : e.Multiplier))),
+                        .Sum(e => e.Multiplier > 1 ? e.Multiplier - 1m : e.Multiplier);
+
+                    return (item.Amount + item.Amount * multipliers) / count;
+                }),
                 ExpensesCount = itemsList.DistinctBy(item => item.ExpenseId).Count()
             };
         }).ToList();
