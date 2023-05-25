@@ -60,6 +60,7 @@ public class CustomerRepository : ICustomerRepository
     {
         var customer = await _context.Customers
             .Include(e => e.Password)
+            .Include(e => e.Role)
             .AsNoTracking()
             .FirstOrDefaultAsync(e => e.Name == username, cancellationToken);
         if (customer is null)
@@ -74,6 +75,11 @@ public class CustomerRepository : ICustomerRepository
         }
 
         return customer;
+    }
+
+    public async Task<List<Customer>> GetAllUsers()
+    {
+        return await _context.Customers.Where(e => e.RoleId == RoleId.User).ToListAsync();
     }
 
     public async Task AddCustomerAsync(Customer customer, CancellationToken cancellationToken = default)
@@ -215,7 +221,8 @@ public class CustomerRepository : ICustomerRepository
                 CategoryName = category.Name,
                 TotalSpend = itemsList.Sum(item =>
                 {
-                    var count = item.ExpenseParticipantItems.Count(e => e.StatusId == ExpenseParticipantItemStatusId.Selected);
+                    var count = item.ExpenseParticipantItems.Count(e =>
+                        e.StatusId == ExpenseParticipantItemStatusId.Selected);
                     var multipliers = item
                         .Expense
                         .ExpenseMultipliers

@@ -79,4 +79,13 @@ public class UsersController : ControllerBase
         var customer = await _serviceManager.CustomerService.GetCustomerByIdAsync(userId);
         return Ok(customer);
     }
+
+    [HttpGet]
+    [Authorize(Roles = "Admin")]
+    [Route("all")]
+    public async Task<ActionResult<List<CustomerResponse>>> GetAllUsers()
+    {
+        var users = await _serviceManager.UserService.GetAllUsers();
+        return Ok(users);
+    }
 }

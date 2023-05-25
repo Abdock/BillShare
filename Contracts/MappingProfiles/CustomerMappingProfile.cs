@@ -12,27 +12,20 @@ public class CustomerMappingProfile : Profile
 {
     public CustomerMappingProfile()
     {
-        CreateMap<Customer, CustomerResponse>(MemberList.Destination);
+        CreateMap<Customer, CustomerResponse>(MemberList.Destination)
+            .ForMember(e => e.Role,
+                expression => { expression.MapFrom(e => e.Role.Name); });
         CreateMap<CreateCustomerDto, Customer>(MemberList.Source);
         CreateMap<Customer, RelatedCustomerResponse>(MemberList.Destination)
-            .ForMember(e=>e.UserId, expression => 
-                expression.MapFrom(e=>e.Id))
-            .ForMember(e=>e.UserName, expression => 
-                expression.MapFrom(e=>e.Name))
+            .ForMember(e => e.UserId, expression =>
+                expression.MapFrom(e => e.Id))
+            .ForMember(e => e.UserName, expression =>
+                expression.MapFrom(e => e.Name))
             .ForMember(e => e.IsFriend, expression => expression.Ignore());
         CreateMap<Customer, UserFriendResponse>(MemberList.Destination)
-            .ForMember(e => e.UserId, expression =>
-            {
-                expression.MapFrom(e => e.Id);
-            })
-            .ForMember(e => e.UserName, expression =>
-            {
-                expression.MapFrom(e => e.Name);
-            })
-            .ForMember(e => e.UserAvatarUrl, expression =>
-            {
-                expression.MapFrom(e => e.AvatarUrl);
-            });
+            .ForMember(e => e.UserId, expression => { expression.MapFrom(e => e.Id); })
+            .ForMember(e => e.UserName, expression => { expression.MapFrom(e => e.Name); })
+            .ForMember(e => e.UserAvatarUrl, expression => { expression.MapFrom(e => e.AvatarUrl); });
         CreateMap<ChangeCustomerAvatarDto, StorageFile>(MemberList.Destination)
             .ForMember(e => e.Id, expression =>
                 expression.MapFrom(e => Guid.NewGuid()));

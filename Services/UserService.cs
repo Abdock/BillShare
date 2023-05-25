@@ -28,6 +28,12 @@ public class UserService : IUserService
         return _mapper.Map<CustomerResponse>(customer);
     }
 
+    public async Task<List<CustomerResponse>> GetAllUsers()
+    {
+        var users = await _unitOfWork.CustomerRepository.GetAllUsers();
+        return users.Select(e => _mapper.Map<CustomerResponse>(e)).ToList();
+    }
+
     public async Task<PagedResponse<RelatedCustomerResponse>> SearchCustomersWithUsername(
         SearchCustomersByUsernameDto dto, CancellationToken cancellationToken = default)
     {

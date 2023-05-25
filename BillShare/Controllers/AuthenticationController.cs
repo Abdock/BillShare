@@ -1,4 +1,5 @@
 ﻿using Contracts.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Abstractions;
 
@@ -29,5 +30,13 @@ public class AuthenticationController : ControllerBase
     {
         var token = await _serviceManager.AuthenticationService.SignInAsync(credentials);
         return Ok(token);
+    }
+
+    [HttpGet]
+    [Route("is_admin")]
+    [Authorize(Roles = "Admin")]
+    public IActionResult IsAdmin()
+    {
+        return Ok();
     }
 }

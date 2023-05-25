@@ -11,4 +11,6 @@ public interface IUserService
 
     Task<PagedResponse<RelatedCustomerResponse>> SearchCustomersWithUsername(SearchCustomersByUsernameDto dto,
         CancellationToken cancellationToken = default);
+
+    public Task<List<CustomerResponse>> GetAllUsers();
 }

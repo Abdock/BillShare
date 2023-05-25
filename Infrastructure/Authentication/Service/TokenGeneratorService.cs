@@ -66,7 +66,8 @@ public class TokenGeneratorService : ITokenGeneratorService
         var claims = new[]
         {
             new Claim(ClaimTypes.Name, customer.Name),
-            new Claim(CustomClaimTypes.Uid, customer.Id.ToString())
+            new Claim(CustomClaimTypes.Uid, customer.Id.ToString()),
+            new Claim(ClaimTypes.Role, customer.Role),
         };
         var accessToken = GenerateAccessToken(claims);
         var refreshToken = await GenerateRefreshTokenAsync(customer, cancellationToken);
