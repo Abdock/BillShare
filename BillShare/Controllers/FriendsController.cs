@@ -37,7 +37,7 @@ public class FriendsController : ControllerBase
     [Authorize]
     public async Task<ActionResult<PagedResponse<UserFriendResponse>>> GetFriends([FromQuery] PaginationDto dto)
     {
-        var url = $"{Request.Scheme}{Request.Host}{Request.Path.Value!}";
+        var url = $"{Request.Scheme}://{Request.Host}{Request.Path.Value!}";
         var request = new GetUserFriendsDto
         {
             UserId = User.GetUserId(),
@@ -54,7 +54,7 @@ public class FriendsController : ControllerBase
     public async Task<ActionResult<PagedResponse<UserFriendResponse>>> GetOutComingFriends(
         [FromQuery] PaginationDto dto)
     {
-        var url = $"{Request.Scheme}{Request.Host}{Request.Path.Value!}";
+        var url = $"{Request.Scheme}://{Request.Host}{Request.Path.Value!}";
         var request = new GetUserFriendsDto
         {
             UserId = User.GetUserId(),
@@ -70,7 +70,7 @@ public class FriendsController : ControllerBase
     [Route("incoming")]
     public async Task<ActionResult<PagedResponse<UserFriendResponse>>> GetInComingFriends([FromQuery] PaginationDto dto)
     {
-        var url = $"{Request.Scheme}{Request.Host}{Request.Path.Value!}";
+        var url = $"{Request.Scheme}://{Request.Host}{Request.Path.Value!}";
         var request = new GetUserFriendsDto
         {
             UserId = User.GetUserId(),

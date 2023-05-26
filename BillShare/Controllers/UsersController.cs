@@ -36,7 +36,7 @@ public class UsersController : ControllerBase
     public async Task<ActionResult<PagedResponse<RelatedCustomerResponse>>> SearchUser([FromQuery] string username,
         [FromQuery] PaginationDto pagination)
     {
-        var path = new Uri($"{Request.Scheme}{Request.Host}{Request.Path.Value!}");
+        var path = new Uri($"{Request.Scheme}://{Request.Host}{Request.Path.Value!}");
         var dto = new SearchCustomersByUsernameDto
         {
             UserId = User.GetUserId(),
