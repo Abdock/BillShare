@@ -20,6 +20,7 @@ public class ReportsController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize]
     [Route("personal")]
     public async Task<ActionResult<Report>> GetReportsForPeriod([FromQuery] ReportForPeriodRequest request)
     {
