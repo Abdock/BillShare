@@ -1,7 +1,6 @@
 ﻿using BillShare.Extensions;
 using BillShare.Requests.Reports;
 using Contracts.DTOs.Reports;
-using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Abstractions;

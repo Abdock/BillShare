@@ -27,4 +27,6 @@ public interface IExpenseService
     Task RemoveItemFromExpenseAsync(RemoveExpenseItemDto dto, CancellationToken cancellationToken = default);
     Task SelectItemInExpenseAsync(SelectExpenseItemDto dto, CancellationToken cancellationToken = default);
     Task UnselectItemInExpenseAsync(UnselectExpenseItemDto dto, CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyCollection<ExpenseResponse>> GetAllExpensesAsync(CancellationToken cancellationToken = default);
 }

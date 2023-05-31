@@ -178,4 +178,10 @@ public class ExpenseService : IExpenseService
             cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task<IReadOnlyCollection<ExpenseResponse>> GetAllExpensesAsync(CancellationToken cancellationToken = default)
+    {
+        var expenses = await _unitOfWork.ExpenseRepository.GetAllExpensesAsync(cancellationToken);
+        return expenses.Select(exp => _mapper.Map<ExpenseResponse>(exp)).ToList();
+    }
 }

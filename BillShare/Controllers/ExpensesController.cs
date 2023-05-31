@@ -127,7 +127,17 @@ public class ExpensesController : ControllerBase
         await _serviceManager.ExpenseService.UnlockExpenseDto(dto);
         return NoContent();
     }
-    
+
+    [HttpPost]
+    [Authorize(Roles = "Admin")]
+    [Route("all")]
+    public async Task<ActionResult<IReadOnlyCollection<ExpenseResponse>>> GetAllExpenses()
+    {
+        var cancellationToken = HttpContext.RequestAborted;
+        var responses = await _serviceManager.ExpenseService.GetAllExpensesAsync(cancellationToken);
+        return Ok(responses);
+    }
+
     #endregion
     
     #region Participants

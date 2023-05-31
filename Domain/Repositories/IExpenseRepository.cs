@@ -32,4 +32,6 @@ public interface IExpenseRepository
 
     Task AddItemAsync(Guid expenseId, Guid customerId, ExpenseItem expenseItem,
         CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyCollection<Expense>> GetAllExpensesAsync(CancellationToken cancellationToken = default);
 }
