@@ -49,8 +49,9 @@ public class GroupRepository : IGroupRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<int> TotalGroupsCountAsync(CancellationToken cancellationToken = default)
+    public async Task<int> TotalGroupsCountAsync(Guid userId, CancellationToken cancellationToken = default)
     {
-        return await _context.Groups.CountAsync(cancellationToken);
+        return await _context.Groups.Include(e => e.Participants).Where(e => e.Participants.Any(x => x.Id == userId))
+            .CountAsync(cancellationToken);
     }
 }

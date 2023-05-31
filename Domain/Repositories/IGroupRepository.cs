@@ -11,5 +11,5 @@ public interface IGroupRepository
     Task<IEnumerable<Group>> GetPagedGroupsAsync(Guid userId, int skipCount, int takeCount,
         CancellationToken cancellationToken = default);
 
-    Task<int> TotalGroupsCountAsync(CancellationToken cancellationToken = default);
+    Task<int> TotalGroupsCountAsync(Guid userId, CancellationToken cancellationToken = default);
 }

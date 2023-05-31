@@ -44,7 +44,7 @@ public class GroupService : IGroupService
         var skipCount = (dto.Pagination.PageNumber - 1) * dto.Pagination.PageSize;
         var groups = await _unitOfWork.GroupRepository
             .GetPagedGroupsAsync(userId, skipCount, dto.Pagination.PageSize, cancellationToken);
-        var totalCount = await _unitOfWork.GroupRepository.TotalGroupsCountAsync(cancellationToken);
+        var totalCount = await _unitOfWork.GroupRepository.TotalGroupsCountAsync(userId, cancellationToken);
         var paginationDto = new CreatePagedResponseDto<GroupResponse>
         {
             Responses = groups.Select(e=>_mapper.Map<GroupResponse>(e)),
