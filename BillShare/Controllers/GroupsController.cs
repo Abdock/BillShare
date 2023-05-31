@@ -49,7 +49,7 @@ public class GroupsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<PagedResponse<GroupResponse>>> GetGroups([FromQuery] PaginationDto pagination)
     {
-        var path = $"{Request.Host}{Request.Path}";
+        var path = $"{Request.Scheme}://{Request.Host}{Request.Path}";
         var dto = new GetGroupsDto
         {
             Pagination = pagination,
