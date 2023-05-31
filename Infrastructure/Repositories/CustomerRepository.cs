@@ -221,14 +221,14 @@ public class CustomerRepository : ICustomerRepository
                 CategoryName = category.Name,
                 TotalSpend = itemsList.Sum(item =>
                 {
-                    var count = item.ExpenseParticipantItems.Count(e =>
+                    var selectedCount = item.ExpenseParticipantItems.Count(e =>
                         e.StatusId == ExpenseParticipantItemStatusId.Selected);
                     var multipliers = item
                         .Expense
                         .ExpenseMultipliers
                         .Sum(e => e.Multiplier > 1 ? e.Multiplier - 1m : e.Multiplier);
 
-                    return (item.Amount + item.Amount * multipliers) / count;
+                    return (item.Amount + item.Amount * multipliers) * item.Count / selectedCount;
                 }),
                 ExpensesCount = itemsList.DistinctBy(item => item.ExpenseId).Count()
             };
