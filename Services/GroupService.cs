@@ -38,11 +38,12 @@ public class GroupService : IGroupService
         return _mapper.Map<GroupResponse>(group);
     }
 
-    public async Task<PagedResponse<GroupResponse>> GetPagedGroupsAsync(GetGroupsDto dto, CancellationToken cancellationToken = default)
+    public async Task<PagedResponse<GroupResponse>> GetPagedGroupsAsync(Guid userId, GetGroupsDto dto,
+        CancellationToken cancellationToken = default)
     {
         var skipCount = (dto.Pagination.PageNumber - 1) * dto.Pagination.PageSize;
         var groups = await _unitOfWork.GroupRepository
-            .GetPagedGroupsAsync(skipCount, dto.Pagination.PageSize, cancellationToken);
+            .GetPagedGroupsAsync(userId, skipCount, dto.Pagination.PageSize, cancellationToken);
         var totalCount = await _unitOfWork.GroupRepository.TotalGroupsCountAsync(cancellationToken);
         var paginationDto = new CreatePagedResponseDto<GroupResponse>
         {

@@ -36,13 +36,14 @@ public class GroupRepository : IGroupRepository
         return group;
     }
 
-    public async Task<IEnumerable<Group>> GetPagedGroupsAsync(int skipCount, int takeCount, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Group>> GetPagedGroupsAsync(Guid userId, int skipCount, int takeCount,
+        CancellationToken cancellationToken = default)
     {
         return await _context.Groups
             .Skip(skipCount)
             .Take(takeCount)
-            .Include(e=>e.Participants)
-            .Include(e=>e.Creator)
+            .Include(e => e.Participants.Where(e => e.Id == userId))
+            .Include(e => e.Creator)
             .AsNoTracking()
             .ToListAsync(cancellationToken);
     }

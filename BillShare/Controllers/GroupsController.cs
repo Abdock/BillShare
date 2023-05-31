@@ -47,15 +47,17 @@ public class GroupsController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize]
     public async Task<ActionResult<PagedResponse<GroupResponse>>> GetGroups([FromQuery] PaginationDto pagination)
     {
         var path = $"{Request.Scheme}://{Request.Host}{Request.Path}";
+        var userId = User.GetUserId();
         var dto = new GetGroupsDto
         {
             Pagination = pagination,
             EndpointUrl = new Uri(path)
         };
-        var response = await _serviceManager.GroupService.GetPagedGroupsAsync(dto);
+        var response = await _serviceManager.GroupService.GetPagedGroupsAsync(userId, dto);
         return Ok(response);
     }
 }
