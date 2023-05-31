@@ -42,8 +42,9 @@ public class GroupRepository : IGroupRepository
         return await _context.Groups
             .Skip(skipCount)
             .Take(takeCount)
-            .Include(e => e.Participants.Where(e => e.Id == userId))
+            .Include(e => e.Participants)
             .Include(e => e.Creator)
+            .Where(e => e.Participants.Any(x => x.Id == userId))
             .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
