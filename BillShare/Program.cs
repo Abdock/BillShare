@@ -12,7 +12,7 @@ builder.Services.ConfigureSwagger();
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
-if(true){
+if(true && true){
     
 }
 
