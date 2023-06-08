@@ -12,6 +12,10 @@ builder.Services.ConfigureSwagger();
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
+if(true){
+    
+}
+
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
